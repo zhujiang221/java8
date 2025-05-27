@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.admin.mapper.MyCommonMapper">
+  <select id="selectByPrimaryKey" parameterType="com.hospital.admin.beans.MyResult"
+          resultType="com.hospital.admin.beans.MyCommon">
+    select
+    *
+    from ${table_name}
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.String">
+    select * from ${table_name}
+  </select>
+  <select id="selectpatients" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+     select * from patient where user_id=#{id,jdbcType=INTEGER}
+  </select>
+   <select id="selectstaff" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+        select * from staff WHERE user_id=#{id,jdbcType=INTEGER}
+   </select>
+
+   <select id="select_person" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+       SELECT
+       u.id,
+       u.username,
+       p.id as patient_id,
+       p.name,
+       p.sex,
+       p.birthdate,
+       p.contact,
+       p.create_time,
+       p.description,
+       a.id AS a_id,
+       a.admission_time,
+       a.discharge_time,
+       a.diagnosis,
+       a.status,
+       w.ward_number,
+       w.ward_type,
+       w.bed_capacity,
+       w.current_status,
+       w.department,
+       w.description AS w_description,
+       s.id AS s_id,
+       s.real_name,
+       s.department AS staff_department,
+       s.contact AS contact_d,
+       s.title
+       FROM users u
+       JOIN patient p ON u.id = p.user_id
+       JOIN admission a ON p.id = a.patient_id
+       JOIN wards w ON a.ward_id = w.id
+       JOIN staff s ON a.doctor_id = s.id
+       WHERE u.id = #{id};
+   </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.hospital.admin.beans.MyResult">
+    delete from ${table_name}
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <!-- 动态插入 -->
+    <insert id="insertSelective" parameterType="com.hospital.admin.beans.MyNewResult">
+        insert into ${table_name}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- Admission -->
+            <if test="myCommon.patient_id != -1">
+                patient_id,
+            </if>
+            <if test="myCommon.ward_id != -1">
+                ward_id,
+            </if>
+            <if test="myCommon.doctor_id != -1">
+                doctor_id,
+            </if>
+            <if test="myCommon.admission_time != null">
+            admission_time,
+            </if>
+            <if test="myCommon.discharge_time != null">
+                discharge_time,
+            </if> <if test="myCommon.diagnosis != null">
+            diagnosis,
+        </if>
+            <if test="myCommon.status != -1">
+                status,
+            </if>
+        <!-- Billing -->
+        <if test="myCommon.item_type != -1">
+            item_type,
+        </if>
+        <if test="myCommon.item_name != null">
+            item_name,
+        </if>
+        <if test="myCommon.quantity != -1">
+            quantity,
+        </if>
+        <if test="myCommon.unit_price != null">
+            unit_price,
+        </if>
+        <if test="myCommon.total_amount != null">
+            total_amount,
+        </if>
+        <if test="myCommon.create_time != null">
+            create_time,
+        </if>
+        <if test="myCommon.bill_status != null">
+            bill_status,
+        </if>
+        <if test="myCommon.operator_id != -1">
+            operator_id,
+        </if>
+
+        <!-- Department -->
+        <if test="myCommon.d_name != null">
+            d_name,
+        </if>
+
+        <!-- Patient -->
+        <if test="myCommon.name != null">
+            name,
+        </if>
+        <if test="myCommon.sex != -1">
+            sex,
+        </if>
+        <if test="myCommon.birthdate !=  null">
+            birthdate,
+        </if>
+        <if test="myCommon.contact != null">
+            contact,
+        </if>
+
+    <!-- Schedules -->
+<!--    <if test="myCommon.nurse_id != -1">-->
+<!--        nurse_id,-->
+<!--    </if>-->
+<!--    <if test="myCommon.shift_id != -1">-->
+<!--        shift_id,-->
+<!--    </if>-->
+<!--    <if test="myCommon.schedule_date != null">-->
+<!--        schedule_date,-->
+<!--    </if>-->
+
+    <!-- Shifts -->
+<!--    <if test="myCommon.shift_name != null">-->
+<!--        shift_name,-->
+<!--    </if>-->
+<!--    <if test="myCommon.start_time != null">-->
+<!--        start_time,-->
+<!--    </if>-->
+<!--    <if test="myCommon.end_time != null">-->
+<!--        end_time,-->
+<!--    </if>-->
+        <if test="myCommon.description != null">
+            description,
+        </if>
+
+        <!-- Staff -->
+        <if test="myCommon.user_id != -1">
+            user_id,
+        </if>
+        <if test="myCommon.real_name != null">
+            real_name,
+        </if>
+        <if test="myCommon.department != null">
+            department,
+        </if>
+        <if test="myCommon.title != null">
+            title,
+        </if>
+        <if test="myCommon.staff_department != null">
+            staff_department,
+        </if>
+
+        <!-- Users -->
+        <if test="myCommon.username != null">
+            username,
+        </if>
+        <if test="myCommon.password != null">
+            password,
+        </if>
+        <if test="myCommon.role != -1">
+            role,
+        </if>
+
+        <!-- Wards -->
+        <if test="myCommon.ward_number != null">
+            ward_number,
+        </if>
+        <if test="myCommon.ward_type != -1">
+            ward_type,
+        </if>
+        <if test="myCommon.bed_capacity != -1">
+            bed_capacity,
+        </if>
+        <if test="myCommon.current_status != -1">
+            current_status,
+        </if>
+      <!-- MedicalOrders -->
+
+       <if test="myCommon.admission_id != -1">
+         admission_id,
+       </if>
+        <if test="myCommon.order_type != -1">
+                order_type,
+        </if>
+        <if test="myCommon.order_content  != null">
+                order_content,
+        </if>
+         <if test="myCommon.order_status != -1">
+                order_status,
+        </if>
+         <if test="myCommon.execute_time  != null">
+                execute_time,
+         </if>
+            <!-- DischargeApplication -->
+            <if test="myCommon.apply_time != null">
+                apply_time,
+            </if>
+            <if test="myCommon.apply_reason != null">
+                apply_reason,
+            </if>
+            <if test="myCommon.approve_doctor_id != -1">
+                approve_doctor_id,
+            </if>
+            <if test="myCommon.approve_status != -1">
+                approve_status,
+            </if>
+            <if test="myCommon.approve_comment != null">
+                approve_comment,
+            </if>
+            <if test="myCommon.approve_time != null">
+                approve_time,
+            </if>
+            <!-- Seckill -->
+            <if test="myCommon.good_name != null">
+                good_name,
+            </if>
+            <if test="myCommon.good_price != -1.0">
+                good_price,
+            </if>
+            <if test="myCommon.good_count != -1">
+                good_count,
+            </if>
+            <if test="myCommon.good_start_time != null">
+                good_start_time,
+            </if>
+            <if test="myCommon.good_end_time != null">
+                good_end_time,
+            </if>
+
+            <!-- Order -->
+            <if test="myCommon.good_id != -1">
+                good_id,
+            </if>
+            <if test="myCommon.mycount != -1">
+                mycount,
+            </if>
+            <if test="myCommon.mysum != -1">
+                mysum,
+            </if>
+            <if test="myCommon.address != null">
+                address,
+            </if>
+            <if test="myCommon.tel != null">
+                tel,
+            </if>
+
+            </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <!-- Admission -->
+            <if test="myCommon.patient_id != -1">
+                #{myCommon.patient_id,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.ward_id != -1">
+                #{myCommon.ward_id,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.doctor_id != -1">
+                #{myCommon.doctor_id,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.admission_time != null">
+                #{myCommon.admission_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="myCommon.discharge_time != null">
+                #{myCommon.discharge_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="myCommon.diagnosis != null">
+                #{myCommon.diagnosis,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.status != -1">
+                #{myCommon.status,jdbcType=INTEGER},
+            </if>
+
+            <!-- Billing -->
+            <if test="myCommon.item_type != -1">
+                #{myCommon.item_type,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.item_name != null">
+                #{myCommon.item_name,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.quantity != -1">
+                #{myCommon.quantity,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.unit_price != null">
+                #{myCommon.unit_price,jdbcType=DECIMAL},
+            </if>
+            <if test="myCommon.total_amount != null">
+                #{myCommon.total_amount,jdbcType=DECIMAL},
+            </if>
+            <if test="myCommon.create_time != null">
+                #{myCommon.create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="myCommon.bill_status != null">
+                #{myCommon.bill_status,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.operator_id != -1">
+                #{myCommon.operator_id,jdbcType=INTEGER},
+            </if>
+
+            <!-- Department -->
+            <if test="myCommon.d_name != null">
+                #{myCommon.d_name,jdbcType=VARCHAR},
+            </if>
+
+            <!-- Patient -->
+            <if test="myCommon.name != null">
+                #{myCommon.name,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.sex != -1">
+                #{myCommon.sex,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.birthdate != null">
+                #{myCommon.birthdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="myCommon.contact != null">
+                #{myCommon.contact,jdbcType=VARCHAR},
+            </if>
+
+        <!-- Schedules -->
+<!--        <if test="myCommon.nurse_id != -1">-->
+<!--            #{myCommon.nurse_id,jdbcType=INTEGER},-->
+<!--        </if>-->
+<!--        <if test="myCommon.shift_id != -1">-->
+<!--            #{myCommon.shift_id,jdbcType=INTEGER},-->
+<!--        </if>-->
+<!--        <if test="myCommon.schedule_date != null">-->
+<!--            #{myCommon.schedule_date,jdbcType=TIMESTAMP},-->
+<!--        </if>-->
+
+        <!-- Shifts -->
+<!--        <if test="myCommon.shift_name != null">-->
+<!--            #{myCommon.shift_name,jdbcType=VARCHAR},-->
+<!--        </if>-->
+<!--        <if test="myCommon.start_time != null">-->
+<!--            #{myCommon.start_time,jdbcType=TIME},-->
+<!--        </if>-->
+<!--        <if test="myCommon.end_time != null">-->
+<!--            #{myCommon.end_time,jdbcType=TIME},-->
+<!--        </if>-->
+        <if test="myCommon.description != null">
+            #{myCommon.description,jdbcType=VARCHAR},
+        </if>
+
+        <!-- Staff -->
+        <if test="myCommon.user_id != -1">
+            #{myCommon.user_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.real_name != null">
+            #{myCommon.real_name,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.department != null">
+            #{myCommon.department,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.title != null">
+            #{myCommon.title,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.staff_department != null">
+            #{myCommon.staff_department,jdbcType=VARCHAR},
+        </if>
+
+        <!-- Users -->
+        <if test="myCommon.username != null">
+            #{myCommon.username,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.password != null">
+            #{myCommon.password,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.role != -1">
+            #{myCommon.role,jdbcType=INTEGER},
+        </if>
+
+        <!-- Wards -->
+        <if test="myCommon.ward_number != null">
+            #{myCommon.ward_number,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.ward_type != -1">
+            #{myCommon.ward_type,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.bed_capacity != -1">
+            #{myCommon.bed_capacity,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.current_status != -1">
+            #{myCommon.current_status,jdbcType=INTEGER},
+        </if>
+
+        <!-- MedicalOrders -->
+
+        <if test="myCommon.admission_id != -1">
+            #{myCommon.admission_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.order_type != -1">
+            #{myCommon.order_type,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.order_content  != null">
+            #{myCommon.order_content,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.order_status != -1">
+        #{myCommon.order_status,jdbcType=INTEGER},
+         </if>
+        <if test="myCommon.execute_time  != null">
+        #{myCommon.execute_time,jdbcType=TIMESTAMP},
+         </if>
+
+        <!-- DischargeApplication -->
+        <if test="myCommon.apply_time != null">
+            #{myCommon.apply_time,jdbcType=TIMESTAMP},
+        </if>
+        <if test="myCommon.apply_reason != null">
+            #{myCommon.apply_reason,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.approve_doctor_id != -1">
+            #{myCommon.approve_doctor_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.approve_status != -1">
+            #{myCommon.approve_status,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.approve_comment != null">
+            #{myCommon.approve_comment,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.approve_time != null">
+            #{myCommon.approve_time,jdbcType=TIMESTAMP},
+        </if>
+
+            <!-- Seckill -->
+            <if test="myCommon.good_name != null">
+                #{myCommon.good_name,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.good_price != -1.0">
+                #{myCommon.good_price,jdbcType=DOUBLE},
+            </if>
+            <if test="myCommon.good_count != -1">
+                #{myCommon.good_count,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.good_start_time != null">
+                #{myCommon.good_start_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="myCommon.good_end_time != null">
+                #{myCommon.good_end_time,jdbcType=TIMESTAMP},
+            </if>
+
+            <!-- Order -->
+            <if test="myCommon.good_id != -1">
+                #{myCommon.good_id,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.mycount != -1">
+                #{myCommon.mycount,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.mysum != -1">
+                #{myCommon.mysum,jdbcType=INTEGER},
+            </if>
+            <if test="myCommon.address != null">
+                #{myCommon.address,jdbcType=VARCHAR},
+            </if>
+            <if test="myCommon.tel != null">
+                #{myCommon.tel,jdbcType=VARCHAR},
+            </if>
+    </trim>
+</insert>
+    <!-- 动态更新 --> <update id="updateByPrimaryKeySelective" parameterType="com.hospital.admin.beans.MyNewResult">
+    update ${table_name}
+    <set>
+
+        <if test="myCommon.id != null">
+            id = #{myCommon.id,jdbcType=INTEGER},
+        </if>
+        <!-- Admission -->
+        <if test="myCommon.patient_id != -1">
+        patient_id = #{myCommon.patient_id,jdbcType=INTEGER},
+    </if>
+        <if test="myCommon.ward_id != -1">
+        ward_id = #{myCommon.ward_id,jdbcType=INTEGER},
+    </if>
+        <if test="myCommon.doctor_id != -1">
+        doctor_id = #{myCommon.doctor_id,jdbcType=INTEGER},
+    </if>
+        <if test="myCommon.admission_time != null">
+            admission_time = #{myCommon.admission_time,jdbcType=TIMESTAMP},
+        </if>
+        <if test="myCommon.discharge_time != null">
+            discharge_time = #{myCommon.discharge_time,jdbcType=TIMESTAMP},
+        </if>
+        <if test="myCommon.diagnosis != null">
+            diagnosis = #{myCommon.diagnosis,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.status != -1">
+            status = #{myCommon.status,jdbcType=INTEGER},
+        </if>
+
+    <!-- Billing -->
+    <if test="myCommon.item_type != -1">
+        item_type = #{myCommon.item_type,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.item_name != null">
+        item_name = #{myCommon.item_name,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.quantity != -1">
+        quantity = #{myCommon.quantity,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.unit_price != null">
+        unit_price = #{myCommon.unit_price,jdbcType=DECIMAL},
+    </if>
+    <if test="myCommon.total_amount != null">
+        total_amount = #{myCommon.total_amount,jdbcType=DECIMAL},
+    </if>
+    <if test="myCommon.create_time != null">
+        create_time = #{myCommon.create_time,jdbcType=TIMESTAMP},
+    </if>
+    <if test="myCommon.bill_status != null">
+        bill_status = #{myCommon.bill_status,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.operator_id != -1">
+        operator_id = #{myCommon.operator_id,jdbcType=INTEGER},
+    </if>
+
+    <!-- Department -->
+    <if test="myCommon.d_name != null">
+        d_name = #{myCommon.d_name,jdbcType=VARCHAR},
+    </if>
+
+    <!-- Patient -->
+    <if test="myCommon.name != null">
+        name = #{myCommon.name,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.sex != -1">
+        sex = #{myCommon.sex,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.birthdate != null">
+        birthdate = #{myCommon.birthdate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="myCommon.contact != null">
+        contact = #{myCommon.contact,jdbcType=VARCHAR},
+    </if>
+
+    <!-- Schedules -->
+<!--    <if test="myCommon.nurse_id != -1">-->
+<!--        nurse_id = #{myCommon.nurse_id,jdbcType=INTEGER},-->
+<!--    </if>-->
+<!--    <if test="myCommon.shift_id != -1">-->
+<!--        shift_id = #{myCommon.shift_id,jdbcType=INTEGER},-->
+<!--    </if>-->
+<!--    <if test="myCommon.schedule_date != null">-->
+<!--        schedule_date = #{myCommon.schedule_date,jdbcType=TIMESTAMP},-->
+<!--    </if>-->
+
+    <!-- Shifts -->
+<!--    <if test="myCommon.shift_name != null">-->
+<!--        shift_name = #{myCommon.shift_name,jdbcType=VARCHAR},-->
+<!--    </if>-->
+<!--    <if test="myCommon.start_time != null">-->
+<!--        start_time =  #{myCommon.start_time,jdbcType=TIME},-->
+<!--    </if>-->
+<!--    <if test="myCommon.end_time != null">-->
+<!--        end_time = #{myCommon.end_time,jdbcType=TIME},-->
+<!--    </if>-->
+    <if test="myCommon.description != null">
+        description = #{myCommon.description,jdbcType=VARCHAR},
+    </if>
+
+    <!-- Staff -->
+    <if test="myCommon.user_id != -1">
+        user_id = #{myCommon.user_id,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.real_name != null">
+        real_name = #{myCommon.real_name,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.department != null">
+        department =  #{myCommon.department,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.title != null">
+        title = #{myCommon.title,jdbcType=VARCHAR},
+    </if>
+        <if test="myCommon.staff_department != null">
+            department =  #{myCommon.staff_department,jdbcType=VARCHAR},
+        </if>
+
+    <!-- Users -->
+    <if test="myCommon.username != null">
+        username = #{myCommon.username,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.password != null">
+        password= #{myCommon.password,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.role != -1">
+        role = #{myCommon.role,jdbcType=INTEGER},
+    </if>
+
+    <!-- Wards -->
+    <if test="myCommon.ward_number != null">
+        ward_number = #{myCommon.ward_number,jdbcType=VARCHAR},
+    </if>
+    <if test="myCommon.ward_type != -1">
+        ward_type = #{myCommon.ward_type,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.bed_capacity != -1">
+        bed_capacity = #{myCommon.bed_capacity,jdbcType=INTEGER},
+    </if>
+    <if test="myCommon.current_status != -1">
+        current_status = #{myCommon.current_status,jdbcType=INTEGER},
+    </if>
+        <!-- MedicalOrders -->
+        <if test="myCommon.admission_id != -1">
+            admission_id = #{myCommon.admission_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.order_type != -1">
+            order_type = #{myCommon.order_type,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.order_content  != null">
+            order_content  = #{myCommon.order_content,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.order_status != -1">
+            order_status = #{myCommon.order_status,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.execute_time  != null">
+            execute_time = #{myCommon.execute_time,jdbcType=TIMESTAMP},
+        </if>
+        <!-- DischargeApplication -->
+        <if test="myCommon.apply_time != null">
+            apply_time = #{myCommon.apply_time,jdbcType=TIMESTAMP},
+        </if>
+        <if test="myCommon.apply_reason != null">
+            apply_reason = #{myCommon.apply_reason,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.approve_doctor_id != -1">
+            approve_doctor_id = #{myCommon.approve_doctor_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.approve_status != -1">
+            approve_status = #{myCommon.approve_status,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.approve_comment != null">
+            approve_comment = #{myCommon.approve_comment,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.approve_time != null">
+            approve_time = #{myCommon.approve_time,jdbcType=TIMESTAMP},
+        </if>
+
+        <!-- Seckill -->
+        <if test="myCommon.good_name != null">
+            good_name = #{myCommon.good_name,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.good_price != -1.0">
+            good_price = #{myCommon.good_price,jdbcType=DOUBLE},
+        </if>
+        <if test="myCommon.good_count != -1">
+            good_count = #{myCommon.good_count,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.good_start_time != null">
+            good_start_time = #{myCommon.good_start_time,jdbcType=TIMESTAMP},
+        </if>
+        <if test="myCommon.good_end_time != null">
+            good_end_time = #{myCommon.good_end_time,jdbcType=TIMESTAMP},
+        </if>
+
+        <!-- Order -->
+        <if test="myCommon.good_id != -1">
+            good_id = #{myCommon.good_id,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.mycount != -1">
+            mycount = #{myCommon.mycount,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.mysum != -1">
+            mysum = #{myCommon.mysum,jdbcType=INTEGER},
+        </if>
+        <if test="myCommon.address != null">
+            address = #{myCommon.address,jdbcType=VARCHAR},
+        </if>
+        <if test="myCommon.tel != null">
+            tel = #{myCommon.tel,jdbcType=VARCHAR},
+        </if>
+
+    </set>
+    <where> id = #{myCommon.id,jdbcType=INTEGER} </where>
+</update>
+</mapper>

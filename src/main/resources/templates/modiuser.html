@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.0.0/jquery.js"></script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.css" rel="stylesheet">
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.js"></script>
+</head>
+<style>
+  /* 保持原有样式不变 */
+  .ui-bar-a, .ui-page-theme-a .ui-bar-inherit, html .ui-bar-a .ui-bar-inherit, html .ui-body-a .ui-bar-inherit, html body .ui-group-theme-a .ui-bar-inherit {
+      background-color: #97c34a;
+      border-color: #dddddd;
+      color: #60c34a;
+      text-shadow: 0 1px 0 #eee;
+      font-weight: bold;
+  }
+  .ui-page-theme-a .ui-btn.ui-btn-active, html .ui-bar-a .ui-btn.ui-btn-active, html .ui-body-a .ui-btn.ui-btn-active, html body .ui-group-theme-a .ui-btn.ui-btn-active, html head + body .ui-btn.ui-btn-a.ui-btn-active, .ui-page-theme-a .ui-checkbox-on:after, html .ui-bar-a .ui-checkbox-on:after, html .ui-body-a .ui-checkbox-on:after, html body .ui-group-theme-a .ui-checkbox-on:after, .ui-btn.ui-checkbox-on.ui-btn-a:after, .ui-page-theme-a .ui-flipswitch-active, html .ui-bar-a .ui-flipswitch-active, html .ui-body-a .ui-flipswitch-active, html body .ui-group-theme-a .ui-flipswitch-active, html body .ui-flipswitch.ui-bar-a.ui-flipswitch-active, .ui-page-theme-a .ui-slider-track .ui-btn-active, html .ui-bar-a .ui-slider-track .ui-btn-active, html .ui-body-a .ui-slider-track .ui-btn-active, html body .ui-group-theme-a .ui-slider-track .ui-btn-active, html body div.ui-slider-track.ui-body-a .ui-btn-active {
+      background-color: #3388cc;
+      border-color: #3388cc;
+      color: #8bc34a;
+      text-shadow: 0 1px 0 #3388cc;
+  }
+  .ui-page-theme-a .ui-btn, html .ui-bar-a .ui-btn, html .ui-body-a .ui-btn, html body .ui-group-theme-a .ui-btn, html head + body .ui-btn.ui-btn-a, .ui-page-theme-a .ui-btn:visited, html .ui-bar-a .ui-btn:visited, html .ui-body-a .ui-btn:visited, html body .ui-group-theme-a .ui-btn:visited, html head + body .ui-btn.ui-btn-a:visited {
+      background-color: #f6f6f6;
+      border-color: #ddd;
+      color: #333;
+      text-shadow: 0 1px 0 #f3f3f3;
+  }
+  .img{
+      width: 100px;
+      height: 100px;
+      border-radius: 50px;
+  }
+  .img img{
+      width: 100px;
+      height: 100px;
+      border-radius: 50px;
+  }
+</style>
+<body>
+<div data-role="header" data-theme="a">
+  <a href="#">返回</a>
+  <h3>标题</h3>
+</div>
+<div data-role="main">
+  <div class="ui-grid-b" style="margin-top: 20px;margin-top: 20px">
+    <div class="ui-block-a"></div>
+    <div class="ui-block-b">
+      <div class="img">
+        <center><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.vdQsPA0YRf7WN1KinvO0mwHaE8?w=272&h=181&c=7&r=0&o=5&dpr=1.3&pid=1.7"/></center>
+      </div>
+    </div>
+    <div class="ui-block-c"></div>
+  </div>
+  <form action="/update" method="post">
+  <input type="hidden" th:value="${oneuser.getId()}" name="id">
+    <!-- 用户名区块保持原样 -->
+    <div class="ui-grid-c" style="margin-top:20px;margin-bottom:20px">
+      <div class="ui-block-a"></div>
+      <div class="ui-block-b"><h3>用卢名:</h3></div>
+      <div class="ui-block-c"><input type="text" placeholder="请输入用户名" name="username"
+       th:value="${oneuser.getUsername()}"/></div>
+      <div class="ui-block-d"></div>
+    </div>
+
+    <!-- 密码区块保持原样 -->
+    <div class="ui-grid-c" style="margin-top:20px;margin-bottom:20px">
+      <div class="ui-block-a"></div>
+      <div class="ui-block-b"><h3>密码:</h3></div>
+      <div class="ui-block-c"><input type="password" placeholder="请输入密码" name="password"
+      th:value="${oneuser.getPassword()}"/></div>
+      <div class="ui-block-d"></div>
+    </div>
+
+    <!-- 调整注册身份区块结构 -->
+    <div class="ui-grid-c" style="margin-top:20px;margin-bottom:20px">
+      <div class="ui-block-a"></div>
+      <div class="ui-block-b"><h3>注册身份</h3></div>
+      <div class="ui-block-c">
+        <center>
+          <select name="identify">
+            <option value="0" selected th:if="${oneuser.getIdentify()==0}">普通用户</option>
+            <option value="0"  th:if="${oneuser.getIdentify()!=0}">普通用户</option>
+            <option value="1" selected th:if="${oneuser.getIdentify()==1}">高级用户</option>
+            <option value="1"  th:if="${oneuser.getIdentify()!=1}">高级用户</option>
+            <option value="2" selected th:if="${oneuser.getIdentify()==2}">高高级用户</option>
+            <option value="2"  th:if="${oneuser.getIdentify()!=2}">高高级用户</option>
+          </select>
+        </center>
+      </div>
+      <div class="ui-block-d"></div>
+    </div>
+
+    <!-- 登录按钮区块 -->
+    <div class="ui-grid-b" style="margin-top:20px;margin-bottom:20px">
+      <div class="ui-block-a"></div>
+      <div class="ui-block-b">
+        <center><button href="#" data-role="button" type="submit">修改</button></center>
+      </div>
+      <div class="ui-block-c"></div>
+    </div>
+  </form>
+</div>
+<div data-role="footer" data-theme="a" data-position="fixed">
+  <div data-role="navbar">
+    <ul>
+      <li><a href="#">首页</a></li>
+      <li><a href="#">分类</a></li>
+      <li><a href="#">客服</a></li>
+      <li><a href="#">我的</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>医生登录 - 医院住院管理系统</title>
+   <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+    <style>
+        .doctor-bg {
+            background: #f8f9fa url('data:image/svg+xml;utf8,<svg ...>') repeat;
+            background-size: 40px 40px;
+        }
+        .doctor-card {
+            border-left: 5px solid #2196F3;
+            box-shadow: 0 5px 15px rgba(33,150,243,0.2);
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .doctor-icon {
+            color: #1976D2;
+            font-size: 4rem;
+        }
+        .btn-doctor {
+            background: #2196F3;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="doctor-bg">
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card doctor-card p-4">
+                <a href="/newlogin" class="btn btn-outline-primary"
+                   style="max-width: 100px;min-width: 40px; padding: 0.5rem 1.25rem;">
+                    <i class="fas fa-arrow-left me-2"></i>返回
+                </a>
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-md doctor-icon"></i>
+                    <h2 class="mt-3 text-primary">医生工作站登录</h2>
+                    <p class="text-muted">请输入您的工号和系统密码</p>
+                </div>
+                <form action="/login_handler" method="post">
+                    <input type="hidden" />
+                    <div class="mb-3">
+                        <input type="text" class="form-control" 
+                               name="username" placeholder="工号" required
+                               >
+                    </div>
+<!--                    pattern="[D]{1}\d{5}" title="医生工号格式：D开头接5位数字"-->
+                    <div class="mb-4">
+                        <input type="password" class="form-control" 
+                               name="password" placeholder="密码" required>
+                    </div>
+                    <input type="hidden" name="role" value="1">
+                    <button class="btn btn-doctor w-100 btn-lg" type="submit">
+                        <i class="fas fa-stethoscope me-2"></i>登录系统
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <!-- 页脚 -->
+        <footer class="nav-footer mt-4 fixed-bottom">
+            <div class="container-fluid h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col text-center text-muted">
+                        &copy; 2025 明亮医院系统
+                        <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+<script>
+    $(document).on("pagecreate", function(){
+        $("input[type='text']").on("focus", function(){
+            $(this).parent().addClass("input-focused");
+        }).on("blur", function(){
+            $(this).parent().removeClass("input-focused");
+        });
+    });
+     //判断账号密码
+    $(document).ready(function() {
+    // 检测URL中的错误参数
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        // 显示弹窗
+        alert('账户或密码错误，请重新输入！');
+        // 清空参数并刷新页面
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.location.reload();
+    }
+    });
+</script>
+</body>
+</html>

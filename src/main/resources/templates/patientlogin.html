@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>患者登录 - 医院住院管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+    <style>
+        .patient-bg {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+        }
+        .patient-card {
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(33,150,243,0.15);
+            background: rgba(255,255,255,0.95);
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .patient-icon {
+            color: #1e88e5;
+            font-size: 4rem;
+            text-shadow: 2px 2px 4px rgba(30,136,229,0.2);
+        }
+        .form-control-patient {
+            border: 2px solid #90caf9;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        .form-control-patient:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 8px rgba(66,165,245,0.3);
+        }
+    </style>
+</head>
+<body class="patient-bg">
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card patient-card p-4">
+                <a href="/newlogin" class="btn btn-outline-primary"
+                   style="max-width: 100px;min-width: 40px; padding: 0.5rem 1.25rem;">
+                    <i class="fas fa-arrow-left me-2"></i>返回
+                </a>
+                <div class="text-center mb-4">
+                    <i class="fas fa-procedures patient-icon"></i>
+                    <h2 class="mt-3 text-primary">患者登录</h2>
+                    <p class="text-muted">请输入您的病历号和预留密码</p>
+                </div>
+                <form action="/login_handler" method="post">
+
+                    <input type="hidden" />
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-patient"
+                               name="username" placeholder="病历号" required
+                               pattern="[a-z0-9]{0,20}" title="请输入0-20位数字或字母">
+                    </div>
+                    <div class="mb-4">
+                        <input type="password" class="form-control form-control-patient" 
+                               name="password" placeholder="密码" >
+                    </div>
+                    <!--required minlength="5"-->
+                    <input type="hidden" name="role" value="0">
+
+                        <button class="btn btn-primary w-100 btn-lg" herf="#" type="submit">
+                        <i class="fas fa-sign-in-alt me-2"></i>登录
+                    </button>
+
+                </form>
+                <div class="text-center mt-3" href="/register">
+                    <a href="/register" class="text-decoration-none small">注册账户</a>
+                </div>
+            </div>
+        </div>
+        <!-- 页脚 -->
+        <footer class="nav-footer mt-4 fixed-bottom">
+            <div class="container-fluid h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col text-center text-muted">
+                        &copy; 2025 明亮医院系统
+                        <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+</div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+<script>
+                $(document).on("pagecreate", function(){
+                    $("input[type='text']").on("focus", function(){
+                        $(this).parent().addClass("input-focused");
+                    }).on("blur", function(){
+                        $(this).parent().removeClass("input-focused");
+                    });
+                });
+                //判断账号密码
+                $(document).ready(function() {
+                // 检测URL中的错误参数
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('error')) {
+                    // 显示弹窗
+                    alert('账户或密码错误，请重新输入！');
+                    // 清空参数并刷新页面
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    window.location.reload();
+                }
+                });
+
+</script>
+</body>
+</html>

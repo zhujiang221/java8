@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>医生工作站 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        @media (max-width: 768px) {
+            .nav-function { top: 56px; }
+        }
+        .required:after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+        .modal-content {
+            border: 2px solid rgba(23, 162, 184, 0.2);
+            border-radius: 0.5rem;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+            min-width: 45px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+    <div class="container-fluid">
+        <form th:action="@{/home}" method="post" class="d-inline" id="homeForm">
+            <input type="hidden" name="id" th:value="${user.id}">
+            <a class="navbar-brand" href="#" onclick="this.closest('form').submit(); return false;">
+                <i class="fas fa-hospital text-primary"></i> 医生工作站
+            </a>
+        </form>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <form th:action="@{/huanzheguanli}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${doc_information.user_id}">
+                        <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">
+                            <i class="fas fa-user-injured me-1"></i>患者管理
+                        </a>
+                    </form>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3 d-none d-md-block" th:text="'当前医生：' + ${doc_information.real_name}"></span>
+                <a class="btn btn-outline-danger" th:href="@{/login/doctor}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="container-fluid main-container">
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title"><i class="fas fa-procedures text-primary"></i> 当前负责患者列表</h5>
+                        <button class="btn btn-light btn-sm" onclick="refreshPatientList()">
+                            <i class="fas fa-sync-alt me-1"></i>刷新列表
+                        </button>
+                        <button class="btn btn-primary"
+                                id="showAdmissionBtn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#admissionModal">
+                            <i class="fas fa-plus me-1"></i>办理住院
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>病历号</th>
+                                <th>姓名</th>
+                                <th>性别</th>
+                                <th>年龄</th>
+                                <th>入院时间</th>
+                                <th>病房信息</th>
+                                <th>诊断结果</th>
+                                <th>当前状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="patient : ${patients}">
+                                <td th:text="${patient.a_id}"></td>
+                                <td th:text="${patient.name}"></td>
+                                <td th:text="${patient.sex == 1} ? '女' : '男'"></td>
+                                <td th:text="${T(java.time.LocalDate).now().getYear() - patient.birthdate.getYear()}"></td>
+                                <td th:text="${patient.admission_time}"></td>
+                                <td th:text="${patient.ward_number ?: '暂未分配病房'}"></td>
+                                <td th:text="${patient.diagnosis ?: '待完善'}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${(patient.status == 0) ? 'bg-success' : 'bg-warning'}"
+                                          th:text="${(patient.status == 0) ? '在院' : '已出院'}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <form th:action="@{/xiangqing}" method="post" class="d-inline">
+                                        <input type="hidden" name="id" th:value="${patient.patient_user_id}">
+                                        <input type="hidden" name="user_id" th:value="${patient.user_id}">
+                                        <a class="btn btn-sm btn-outline-info" href="#" onclick="this.closest('form').submit(); return false;">
+                                            <i class="fas fa-file-medical">查看</i>
+                                        </a>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 住院办理模态框 -->
+<div class="modal fade" id="admissionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="fas fa-bed me-2"></i>住院登记</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="admissionForm" th:action="@{/Common_insert}" method="post">
+                <input type="hidden" name="class_name" value="com.hospital.admin.beans.Admission">
+                <input type="hidden" name="doctor_id" th:value="${doc_information.id}">
+                <input type="hidden" name="status" value="0">
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label required">患者ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-injured"></i></span>
+                                <input type="text" class="form-control" name="patient_id"
+                                       placeholder="输入患者ID" required pattern="\d+">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">病房分配</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                                <select class="form-select" name="ward_id" required>
+                                    <option value="" disabled selected>选择病房...</option>
+                                    <option th:each="ward : ${wards}"
+                                            th:value="${ward.id}"
+                                            th:text="${ward.ward_number}"
+                                            th:disabled="${ward.current_status == 1}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label required">诊断信息</label>
+                            <textarea class="form-control" name="diagnosis" rows="4"
+                                      placeholder="输入详细诊断内容..." required maxlength="500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="fas fa-check-circle me-1"></i> 提交登记
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 成功提示模态框 -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                <h5 class="mb-3">住院登记成功！</h5>
+                <p>页面即将自动刷新...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 住院登记处理
+    (function() {
+        const admissionForm = $('#admissionForm');
+        const admissionModal = $('#admissionModal');
+        const successModal = new bootstrap.Modal('#successModal');
+
+        admissionForm.on('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = $(this).find('[type="submit"]');
+            submitBtn.prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                提交中...
+            `);
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: (response) => {
+                    if(response.trim() === "success") {
+                        admissionModal.modal('hide');
+                        successModal.show();
+                        setTimeout(() => location.reload(), 2000);
+                    } else {
+                        showError('提交失败: ' + response);
+                    }
+                },
+                error: () => showError('网络连接异常，请稍后重试'),
+                complete: () => {
+                    submitBtn.prop('disabled', false).html(`
+                        <i class="fas fa-check-circle me-1"></i> 提交登记
+                    `);
+                }
+            });
+        });
+
+        function showError(msg) {
+            admissionForm.find('.alert').remove();
+            admissionForm.prepend(`
+                <div class="alert alert-danger alert-dismissible fade show mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${msg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+        }
+
+        admissionModal.on('hidden.bs.modal', () => {
+            admissionForm.trigger('reset');
+            admissionForm.find('.alert').remove();
+        });
+    })();
+</script>
+<script>
+    function refreshPatientList() {
+        location.reload();
+    }
+</script>
+</body>
+</html>

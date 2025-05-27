@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>秒杀活动 - 住院服务系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        .card-hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+    <div class="container-fluid">
+        <form action="@{/home}" method="post" class="d-inline">
+            <a class="navbar-brand" href="#" type="submit">
+                <input type="hidden" name="id" value="${user.id}">
+                <i class="fas fa-hospital text-primary"></i> 住院服务系统
+            </a>
+        </form>
+
+        <div class="d-md-none ms-auto me-2">
+            <div class="d-flex flex-column text-end">
+                <small class="text-muted" text="'ID:' + ${pat_information.id}"></small>
+                <span class="small" text="${pat_information.name}"></span>
+            </div>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto"></ul>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-secondary" th:href="@{/login/patient}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="container main-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <button class="btn btn-secondary mb-3" onclick="history.back()">
+                <i class="fas fa-arrow-left me-2"></i>返回
+            </button>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="item,myindex : ${goods}">
+            <div class="card h-100 shadow-sm card-hover">
+                <img th:src="@{/images/youhuijuan.png}"
+                     class="card-img-top p-3"
+                     alt="优惠券"
+                     style="object-fit: contain; max-height: 200px">
+
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary" th:text="${item.getGood_name()}"></h5>
+                    <div class="mb-3">
+                        <span class="badge bg-success" th:text="'库存: ' + ${item.getGood_count()} + '张'"></span>
+                        <span class="badge bg-danger" th:text="'价格: ' + ${item.getGood_price()} + '元'"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a th:href="@{'/create_seckill?id=' + ${item.getId()}}"
+                           class="btn btn-danger"
+                           th:if="${!success.get(myindex.index)}">
+                            <i class="fas fa-bolt me-2"></i>立即秒杀
+                        </a>
+
+                        <div th:if="${success.get(myindex.index)}" class="btn-group w-100">
+                            <a th:href="@{'/back_order?good_id=' + ${item.getId()}}"
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-undo me-2"></i>取消订单
+                            </a>
+                            <a th:href="@{'/pay_order?good_id=' + ${item.getId()} + '&user_id=1&price=' + ${item.getGood_price()}}"
+                               class="btn btn-success">
+                                <i class="fas fa-credit-card me-2"></i>立即支付
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer fixed-footer">
+    <div class="container-fluid py-3 border-top">
+        <div class="row align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<!-- WebSocket 相关 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const socket = new SockJS('/websocket');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/warn', function(message) {
+                $('#mymessage').text(message.body);
+            });
+        });
+    });
+</script>
+</body>
+</html>

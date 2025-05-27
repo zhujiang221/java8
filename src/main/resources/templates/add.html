@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员增加字段</title>
+
+    <!-- 引用原有框架 -->
+    <!-- 样式依赖 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Tailwind CSS和Font Awesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+
+    <!-- Tailwind配置（与目标风格一致） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',       // 蓝色
+                        secondary: '#E8F3FF',     // 浅蓝色
+                        accent: '#003399',        // 深蓝色
+                        neutral: '#F5F5F5',       // 浅灰色
+                        gold: '#FFD700',          // 金色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #165DFF 0%, #003399 100%);
+            }
+            .shadow-blue {
+                box-shadow: 0 8px 24px rgba(22, 93, 255, 0.12);
+            }
+            .text-shadow {
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+            .input-focus {
+                @apply border-primary ring-2 ring-primary/20 transform scale-[1.01];
+            }
+        }
+        .ui-input-text input, .ui-input-search input {
+            height: 20px;
+        }
+        .ui-input-text input, .ui-input-search input {
+            width: 332px;
+        }
+        .hidden {
+    display: none !important;
+}
+    </style>
+
+    <style>
+        /* 重置jQuery Mobile部分样式 */
+        .ui-btn {
+            border-radius: 0.5rem !important;
+        }
+        .ui-grid-c .ui-block-a,
+        .ui-grid-c .ui-block-b,
+        .ui-grid-c .ui-block-c,
+        .ui-grid-c .ui-block-d {
+            padding: 0.5rem;
+        }
+        .w-12 {
+            width: 30px;
+        }
+        .bg-secondary {
+            background-color: rgb(255, 255, 255) !important;
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans">
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" onclick="refreshPatientList()">
+            <i class="fas fa-shield-alt"></i> 系统管理平台
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Admission&page=1">住院记录管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Billing&page=1">费用明细管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Department&page=1">科室管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.MedicalOrders&page=1">医嘱管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Patient&page=1">患者信息管理</a>
+                </li>
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Schedules">Schedules</a>-->
+                <!--                </li>-->
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Shifts">Shifts</a>-->
+                <!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Staff&page=1">医护人员信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Users&page=1">用户账户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Wards&page=1">病房信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.DischargeApplication&page=1">出院申请管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.SecKill&page=1">秒杀商品信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.MyOrder&page=1">订单信息管理</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-light" th:href="@{/login/admin}" >
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主要内容区域 -->
+<div data-role="main" class="container mx-auto px-4 py-8">
+    <h5>-</h5>
+    <h5>-</h5>
+    <h5>-</h5>
+    <!-- 表单卡片 -->
+    <form action="/addpage_handler" method="post" class="bg-white rounded-2xl shadow-blue p-6 max-w-md mx-auto">
+        <input type="hidden" th:value="${class_name}" name="class_name" />
+
+
+        <!-- 循环生成的表单字段 -->
+        <div class="space-y-6" th:each="myanno, myindex:${anotations}">
+            <!-- 普通文本输入框 -->
+            <div th:if="${myanno!='性别'
+            && myanno!='健康指数'
+            && myanno!='身份'
+            && myanno!='密码'
+            && myanno!='编号'
+            && myanno!='入院时间'
+            && myanno!='出院时间'
+            && myanno!='生成时间'
+            && myanno!='创建时间'
+            && myanno!='执行时间'
+            && myanno!='出生日期'
+            && myanno!='申请时间'
+            && myanno!='审批时间'
+            && myanno!='总金额'
+            && myanno!='秒杀开始时间'
+            && myanno!='秒杀结束时间'
+
+             }"
+                 class="flex items-center border rounded-lg">
+                <div class="w-12 h-12 bg-secondary flex items-center justify-center border-r border-gray-300">
+                    <i class="fa fa-user text-primary" th:class="${myanno=='用户名'?'fa-user':'fa-id-card'}"></i>
+                </div>
+                <input type="text"
+                       th:placeholder="${myanno}"
+                       th:name="${names[myindex.index]}"
+                       class="flex-1 p-4 border-l-0 focus:outline-none focus:input-focus transition-custom" />
+            </div>
+
+
+
+
+            <!-- 密码输入框 -->
+            <div th:if="${myanno=='密码'}" class="flex items-center border rounded-lg">
+                <div class="w-12 h-12 bg-secondary flex items-center justify-center border-r border-gray-300">
+                    <i class="fa fa-lock text-primary"></i>
+                </div>
+                <input type="password"
+                       placeholder="请输入密码"
+                       th:name="${names[myindex.index]}"
+                       class="flex-1 p-4 border-l-0 focus:outline-none focus:input-focus transition-custom" />
+            </div>
+
+            <!-- 性别选择 -->
+            <div th:if="${myanno=='性别'}" class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium">性别</h3>
+                </div>
+                <div class="flex space-x-6">
+                    <label class="flex items-center">
+                        <input type="radio" value="0" th:name="${names[myindex.index]}" class="form-radio text-primary" />
+                        <span class="ml-2">男</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" value="1" th:name="${names[myindex.index]}" class="form-radio text-primary" />
+                        <span class="ml-2">女</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 下拉选择框 -->
+            <div th:if="${myanno=='健康指数' || myanno=='护工级别' || myanno=='身份'}" class="space-y-3">
+                <label class="block text-sm font-medium text-gray-700">
+                    <span th:text="${myanno}"></span>
+                </label>
+                <div class="relative">
+                    <select th:name="${names[myindex.index]}" class="block w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary p-4 appearance-none bg-white">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+                        <i class="fa fa-chevron-down text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-gradient-blue text-white py-3 px-4 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-custom">
+                <i class="fa fa-sign-in mr-2"></i> 添加
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 交互效果JS -->
+<script>
+    $(document).ready(function() {
+        // 输入框焦点效果
+        $("input").focus(function() {
+            $(this).addClass("input-focus");
+            $(this).prev().addClass("bg-primary/10 border-primary");
+        }).blur(function() {
+            $(this).removeClass("input-focus");
+            $(this).prev().removeClass("bg-primary/10 border-primary");
+        });
+
+        // 导航栏选中效果
+        $("div[data-role='navbar'] a").click(function() {
+            $("div[data-role='navbar'] a").removeClass("text-accent");
+            $(this).addClass("text-accent");
+        });
+    });
+</script>
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

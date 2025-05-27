@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>医生工作站 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        @media (max-width: 768px) {
+            .nav-function {
+                top: 56px;
+            }
+        }
+    </style>
+    <style>
+        .animate__animated {
+            animation-duration: 0.5s;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .animate__fadeOut {
+            animation-name: fadeOut;
+        }
+    </style>
+
+</head>
+<body>
+<!-- 主导航栏 -->
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+
+    <div class="container-fluid">
+        <form th:action="@{/home}" method="post" class="d-inline" id="homeForm">
+            <input type="hidden" name="id" th:value="${user.id}">
+            <a class="navbar-brand" href="#" onclick="this.closest('form').submit(); return false;">
+                <i class="fas fa-hospital text-primary"></i> 医生工作站
+            </a>
+        </form>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <!-- 患者管理 -->
+                <li class="nav-item">
+                    <form th:action="@{/huanzheguanli}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${user.id}">
+                        <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">
+                            <i class="fas fa-user-injured me-1"></i>患者管理
+                        </a>
+                    </form>
+                </li>
+
+
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3 d-none d-md-block" th:text="'当前医生：' + ${doc_information.real_name}"></span>
+                <button class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <a class="btn btn-outline-danger" th:href="@{/login/doctor}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<!-- 主内容区 -->
+<div class="container-fluid main-container">
+
+    <!-- 患者信息卡片 -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+            <form th:action="@{/huanzheguanli}" method="post" class="d-inline">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <button type="submit" class="btn btn-light btn-sm rounded-pill border-2 shadow-sm">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    返回
+                </button>
+            </form>
+            <h2>  </h2>
+            <h5 class="mb-0"><i class="fas fa-user-injured me-2"></i>患者基本信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- 第一列 -->
+                <div class="col-md-4">
+                    <dl>
+                        <dt>病历号：</dt>
+                        <dd th:text="${patient.a_id}">-</dd>
+                        <dt>姓名：</dt>
+                        <dd th:text="${patient.name}">-</dd>
+                        <dt>性别：</dt>
+                        <dd th:text="${patient.sex == 1} ? '女' : '男'">-</dd>
+                    </dl>
+                </div>
+                <!-- 第二列 -->
+                <div class="col-md-4">
+                    <dl>
+                        <dt>年龄：</dt>
+                        <dd th:text="${T(java.time.LocalDate).now().getYear() - patient.birthdate.getYear()}">-</dd>
+                        <dt>联系方式：</dt>
+                        <dd th:text="${patient.contact_d}">-</dd>
+                        <dt>入院时间：</dt>
+                        <dd th:text="${#temporals.format(patient.admission_time, 'yyyy-MM-dd')}">-</dd>
+                    </dl>
+                </div>
+                <!-- 第三列 -->
+                <div class="col-md-4">
+                    <dl>
+                        <dt>病房号：</dt>
+                        <dd th:text="${patient.ward_number}">-</dd>
+                        <dt>诊断结果：</dt>
+                        <dd th:text="${patient.diagnosis}">-</dd>
+                        <dt>当前状态：</dt>
+                        <dd>
+                            <span class="badge"
+                                  th:classappend="${patient.status == 0} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${patient.status == 0} ? '在院' : '已出院'"></span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="col">
+                <p class="text-muted mb-1"></p>
+                <center>
+                    <!-- 修改后的按钮代码 -->
+                    <button type="button"
+                            class="btn btn-primary w-55 h-75"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal">
+                        修改诊断结果
+                    </button>
+                </center>
+            </div>
+
+        </div>
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-file-export text-primary"></i> 出院申请</h5>
+                    <!--当前状态模块-->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="text-muted h6">
+                                当前时间：<span id="mydiv"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${dis != null}" class="alert"
+                         th:classappend="${dis.approve_status == 1}">
+                        <!-- 其他字段展示 -->
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="row">
+                                        <dt class="col-sm-4">审批状态：</dt>
+                                        <dd class="col-sm-8" th:switch="${dis.approve_status}">
+                                            <span th:case="0" style="color: #FFD700;">待处理</span>
+                                            <span th:case="1" style="color: green;">同意</span>
+                                            <span th:case="2" style="color: red;">拒绝</span>
+                                            <span th:case="*" style="color: gray;">未知状态</span> <!-- 容错处理 -->
+                                        </dd>
+                                        <!-- 申请时间 -->
+                                        <dt class="col-sm-4">申请时间：</dt>
+                                        <dd class="col-sm-8" th:text="${#dates.format(dis.apply_time, 'yyyy-MM-dd HH:mm')}"></dd>
+                                        <!-- 处理时间 -->
+                                        <dt class="col-sm-4">处理时间：</dt>
+                                        <dd  class="col-sm-8" th:text=" ${#dates.format(dis.approve_time, 'yyyy-MM-dd HH:mm')}"></dd>
+                                        <dt class="col-sm-4">审批医生：</dt>
+                                        <dd class="col-sm-8"th:text=" ${patient.real_name}"></dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <dt>申请原因：</dt>
+                                        <dd style="white-space: pre-wrap">[[${dis.apply_reason}]]</dd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 审批意见 -->
+                        <div th:if="${dis.approve_comment != null}" class="mt-2">
+                            <p class="mb-0">
+                                <strong>审批意见：</strong>
+                                [[${dis.approve_comment}]]
+                            </p>
+                        </div>
+                    </div>
+                    <!-- 申请表单 -->
+                    <!-- 出院申请表单 -->
+                    <form id="dischargeForm" th:action="@{/Common_updatehh}" method="post" onsubmit="return false">
+                        <input type="hidden" name="class_name" value="com.hospital.admin.beans.DischargeApplication">
+                        <!--dis?.id 表示如果dis不为null则获取id，否则返回null-->
+                        <input type="hidden" name="id" th:value="${dis?.id != null} ? ${dis.id} : ''">
+                        <input type="hidden" name="approve_time" id="apply_time_input">
+                        <div class="mb-3" th:if="${dis != null and dis.approve_status != 1 and dis.approve_status != null and dis.approve_status ==0}">
+                            <div class="mb-2"  style="width:200px">
+                            <select class="form-select" name="approve_status" required>
+                                <option value="2">拒绝出院</option>
+                                <option value="1">同意出院</option>
+                            </select>
+                            </div>
+                            <label class="form-label">审批意见</label>
+                            <textarea class="form-control"
+                                      id="applyReason"
+                                      name="approve_comment"
+                                      rows="4"
+                                      required
+                                      th:value="${dis.approve_comment}"
+                            ></textarea>
+                            <div class="invalid-feedback">请填写审批意见</div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end"
+                             th:if="${dis != null and dis.approve_status != 1 and dis.approve_status != null and dis.approve_status ==0}">
+                            <button type="button" class="btn" id="submitDischarge">
+                                <i class="fas fa-paper-plane me-2"></i>提交申请
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 医嘱管理表格 -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-medical me-2"></i>医嘱记录</h5>
+                <button class="btn btn-light btn-sm" onclick="refreshPatientList()">
+                    <i class="fas fa-sync-alt me-1"></i>刷新列表
+                </button>
+                <button class="btn btn-light btn-sm"
+                        id="addOrderBtn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addOrderModal">
+                    <i class="fas fa-plus me-1"></i>新增医嘱
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>类型</th>
+                        <th>医嘱内容</th>
+                        <th>状态</th>
+                        <th>开嘱时间</th>
+                        <th>执行时间</th>
+                        <th>执行人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${yizhu}">
+                        <td>
+                                <span class="badge"
+                                      th:classappend="${order.order_type == 0} ? 'bg-primary' : 'bg-warning'"
+                                      th:text="${order.order_type == 0} ? '长期医嘱' : '临时医嘱'"></span>
+                        </td>
+                        <td th:text="${order.order_content}">-</td>
+                        <td>
+                                <span class="badge"
+                                      th:classappend="${order.order_status == 0} ? 'bg-secondary' : 'bg-success'"
+                                      th:text="${order.order_status == 0} ? '待执行' : '已执行'"></span>
+                        </td>
+                        <td th:text="${#temporals.format(order.create_time, 'yyyy-MM-dd HH:mm')}">-</td>
+                        <td>
+                                <span th:if="${order.execute_time.year > 1}"
+                                      th:text="${#temporals.format(order.execute_time, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:unless="${order.execute_time.year > 1}" class="text-muted">未执行</span>
+                        </td>
+                        <td th:text="${order.real_name}">-</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info delete-btn"
+                                    th:attr="data-class-name='com.hospital.admin.beans.MedicalOrders',
+                                     data-id=${order.id}">
+                                        删除
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 费用管理表格 -->
+
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            document.getElementById("mydiv").innerText = formattedTime;
+
+            // 获取input元素并设置value
+            const applyTimeInput = document.getElementById('apply_time_input');
+            if (applyTimeInput) {
+                applyTimeInput.value = formattedTime;
+            }
+        }
+
+        // 初始执行一次
+        updateTime();
+
+        // 每秒更新
+        const timer = setInterval(updateTime, 1000);
+
+        // 页面卸载时清理定时器
+        window.onunload = () => clearInterval(timer);
+
+    </script>
+    <script>
+        // 出院申请处理
+        document.getElementById('submitDischarge').addEventListener('click', function() {
+            const form = document.getElementById('dischargeForm');
+            const textarea = document.getElementById('applyReason');
+
+            // 清除验证状态
+            form.classList.remove('was-validated')
+
+            // 前端验证
+            if (!textarea.value.trim()) {
+                textarea.classList.add('is-invalid');
+                return;
+            }
+
+            // 收集表单数据
+            const formData = new FormData(form);
+
+            // AJAX提交
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'success') {
+                    // 显示成功模态框
+                    const successModal = new bootstrap.Modal('#operationSuccessModal');
+                    successModal.show();
+
+                    // 2秒后刷新页面
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    alert('提交失败: ' + result);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('请求失败，请检查网络连接');
+            });
+        });
+
+        // 实时验证输入
+        document.getElementById('applyReason').addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+            }
+        });
+    </script>
+<script>
+    // 删除功能处理
+    $(document).ready(function() {
+        $(document).on('click', '.delete-btn', function() {
+            const className = $(this).data('class-name');
+            const id = $(this).data('id');
+            const $row = $(this).closest('tr');
+            const itemName = $row.find('td:eq(1)').text().substring(0, 20) + '...'; // 截取医嘱内容前20字符
+
+            if (confirm(`确定要删除【${itemName}】这条记录吗？`)) {
+                const $btn = $(this);
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 删除中');
+
+                $.ajax({
+                    url: '/Common_del',
+                    method: 'POST',
+                    data: {
+                        class_name: className,
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response === 'success') {
+                            // 添加删除成功动画
+                            $row.addClass('table-danger');
+                            setTimeout(() => {
+                                $row.addClass('animate__animated animate__fadeOut');
+                                setTimeout(() => location.reload(), 500);
+                            }, 1000);
+                        } else {
+                            $btn.prop('disabled', false).text('删除');
+                            alert(`删除失败: ${response}`);
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('删除');
+                        alert('网络请求失败，请检查连接');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    // 新增医嘱功能（独立作用域）
+    (function(){
+        // 使用唯一ID防止冲突
+        const addOrderForm = $('#addOrderForm');
+        const addOrderModal = $('#addOrderModal');
+        const addSuccessModal = new bootstrap.Modal('#addSuccessModal');
+
+        // 绑定提交事件
+        addOrderForm.on('submit', function(e) {
+            e.preventDefault();
+
+            // 禁用按钮防止重复提交
+            const submitBtn = $(this).find('[type="submit"]');
+            submitBtn.prop('disabled', true);
+            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> 提交中...');
+
+            // AJAX提交
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if(response === "success") {
+                        addOrderModal.modal('hide');
+                        addSuccessModal.show();
+
+                        // 2秒后自动刷新
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showError('提交失败: ' + response);
+                    }
+                },
+                error: function() {
+                    showError('网络请求异常，请检查连接');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html('提交医嘱');
+                }
+            });
+        });
+
+        // 错误提示（局部作用域）
+        function showError(msg) {
+            // 先清除旧提示
+            addOrderForm.find('.alert').remove();
+            // 添加新提示
+            addOrderForm.prepend(
+                `<div class="alert alert-danger alert-dismissible fade show mb-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    ${msg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`
+            );
+        }
+
+        // 模态框关闭时重置
+        addOrderModal.on('hidden.bs.modal', function(){
+            addOrderForm.trigger('reset');
+            addOrderForm.find('.alert').remove();
+        });
+    })();
+</script>
+
+<script>
+    $(document).on("pagecreate", function(){
+        // 移动端优化
+        if(window.innerWidth < 768) {
+            $('.dropdown-menu').addClass('shadow');
+            $('.table').addClass('table-sm');
+        }
+
+        // 自动关闭移动端菜单
+        $('.dropdown-item').on('click', function(){
+            if(window.innerWidth < 768) {
+                $('#mainNav').collapse('hide');
+            }
+        });
+
+        // 医嘱管理切换
+        $('#orderManage').on('show.bs.collapse', function(){
+            $('a[data-bs-target="#orderManage"] i').removeClass('fa-edit').addClass('fa-times-circle');
+        }).on('hide.bs.collapse', function(){
+            $('a[data-bs-target="#orderManage"] i').removeClass('fa-times-circle').addClass('fa-edit');
+        });
+    });
+</script>
+<script>
+
+    $(document).ready(function() {
+            // 绑定修改按钮点击事件
+            $('.btn-primary').click(function(){
+                $('#editModal').modal('show');
+            });
+
+            // 表单提交处理
+            // 表单提交处理
+            $('#editForm').submit(function(e){
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function(response){
+                        if(response === "success") {
+                            $('#editModal').modal('hide');
+                            // 显示成功提示模态框
+                            const successModal = new bootstrap.Modal('#successModal');
+                            successModal.show();
+
+                            // 2秒后自动刷新页面
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            alert('修改失败: ' + response);
+                        }
+                    },
+                    error: function(){
+                        alert('请求失败，请稍后再试');
+                    }
+                });
+            });
+
+        });
+</script>
+<script>
+    function refreshPatientList() {
+        location.reload();
+    }
+</script>
+
+<script>
+    // 通用成功处理函数 (使用独立作用域防止冲突)
+    (function(){
+        // 初始化成功模态框
+        const successModal = new bootstrap.Modal('#successModal');
+        const successModal1 = new bootstrap.Modal('addSuccessModal');
+        // 统一成功处理器
+        window.handleSuccess = function() {
+            successModal.show();
+            setTimeout(() => {
+                location.reload();  // 2秒后自动刷新
+            }, 2000);
+        }
+        // 统一成功处理器
+        window.handleSuccess = function() {
+            successModal1.show();
+            setTimeout(() => {
+                location.reload();  // 2秒后自动刷新
+            }, 2000);
+        }
+    })();
+</script>
+<script>
+    // 修改诊断结果提交处理
+    $(document).ready(function() {
+        $('#editForm').submit(function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response){
+                    if(response === "success") {
+                        $('#editModal').modal('hide');
+                        const successModal = new bootstrap.Modal('#successModal');
+                        successModal.show();
+                        setTimeout(() => location.reload(), 2000);
+                    } else {
+                        alert('修改失败: ' + response);
+                    }
+                },
+                error: function(){
+                    alert('请求失败，请稍后再试');
+                }
+            });
+        });
+
+        // 新增医嘱成功处理（优化进度条动画）
+        const addOrderForm = $('#addOrderForm');
+        addOrderForm.on('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = $(this).find('[type="submit"]');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 提交中...');
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if(response === "success") {
+                        $('#addOrderModal').modal('hide');
+                        const addSuccessModal = new bootstrap.Modal('#addSuccessModal');
+                        addSuccessModal.show();
+
+                        // 添加进度条动画
+                        const $progress = $('#addSuccessModal .progress-bar');
+                        $progress.css('width', '0%').animate({width: '100%'}, 2000, 'linear');
+                        setTimeout(() => location.reload(), 2000);
+                    } else {
+                        showError('提交失败: ' + response);
+                    }
+                },
+                error: () => showError('网络请求异常，请检查连接'),
+                complete: () => submitBtn.prop('disabled', false).html('提交医嘱')
+            });
+        });
+    });
+
+    // 错误提示函数
+    function showError(msg) {
+        const $form = $('#addOrderForm');
+        $form.find('.alert').remove();
+        $form.prepend(
+            `<div class="alert alert-danger alert-dismissible fade show mb-3">
+                <i class="fas fa-exclamation-circle me-2"></i>${msg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`
+        );
+    }
+
+    // 模态框关闭时重置
+    $('#addOrderModal').on('hidden.bs.modal', () => {
+        $('#addOrderForm').trigger('reset').find('.alert').remove();
+    });
+</script>
+</body>
+<!-- 修改信息模态框 -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel"><i class="bi bi-pencil-square"></i> 修改诊断结果</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editForm" th:action="@{/Common_update}" method="post">
+                <input type="hidden" name="class_name" value="com.hospital.admin.beans.Admission">
+                <input type="hidden" name="id" th:value="${patient.a_id}">
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">是否出院</label>
+                            <select class="form-select" name="status" required>
+                                <option value="0">继续入住</option>
+                                <option value="1">已出院</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">新诊断结果</label>
+                            <textarea class="form-control" name="diagnosis" rows="3"
+                                      th:text="${patient.diagnosis}"
+                                      maxlength="255"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- 修改诊断结果成功提示 -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+                <h5 class="mb-3">修改成功！</h5>
+                <p class="text-muted">诊断结果已更新</p>
+                <div class="progress mt-3" style="height: 3px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增医嘱成功提示 -->
+<div class="modal fade" id="addSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-file-medical text-success fs-1 mb-3"></i>
+                <h5 class="mb-3">医嘱添加成功！</h5>
+                <p class="text-muted">新医嘱已保存到系统</p>
+                <div class="progress mt-3" style="height: 3px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 新增医嘱模态框 -->
+<div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="addOrderModalLabel"><i class="fas fa-file-medical me-2"></i>新增医嘱</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addOrderForm" th:action="@{/Common_insert}" method="post">
+                <input type="hidden" name="class_name" value="com.hospital.admin.beans.MedicalOrders">
+                <input type="hidden" name="doctor_id" th:value="${patient.s_id}">
+                <input type="hidden" name="patient_id" th:value="${patient.patient_id}">
+                <input type="hidden" name="admission_id" th:value="${patient.a_id}">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- 医嘱类型 -->
+                        <div class="col-md-6">
+                            <label class="form-label">医嘱类型</label>
+                            <select class="form-select" name="order_type" required>
+                                <option value="0">长期医嘱</option>
+                                <option value="1">临时医嘱</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">执行人</label>
+                            <select class="form-select" name="real_name" required>
+                                <option
+                                        th:each="doc : ${my}"
+                                        th:value="${doc.real_name}"
+                                        th:text="${doc.real_name}"
+                                ></option>
+
+                            </select>
+                        </div>
+
+                        <!-- 医嘱内容 -->
+                        <div class="col-12">
+                            <label class="form-label">医嘱内容</label>
+                            <textarea class="form-control" name="order_content" rows="4"
+                                      placeholder="请输入医嘱详细内容..." required
+                                      maxlength="500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-info text-white">提交医嘱</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="operationSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+                <h5 class="mb-3">操作成功！</h5>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理页面</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.css" rel="stylesheet">
+
+</head>
+<body>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
+<div class="card" style="width:100%">
+<!--    <img src="https://img.shetu66.com/2023/08/11/1691718566833234.jpg" class="card-img-top" alt="..." style="height:500px">-->
+    <div class="card-body">
+        <h2 class="card-title"><center style="color:red">
+            后&nbsp台&nbsp管&nbsp理&nbsp系&nbsp统
+        </center></h2>
+        <h3 class="card-title"><center style="color:red">贩卖系统</center></h3>
+    </div>
+</div>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">管理管理</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyOld">敬老管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyConcat">联系人管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyCare">护工管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyUser">用户管理</a>
+                </li>
+
+
+<!--                <li class="nav-item dropdown">-->
+<!--                    <a class="nav-link dropdown-toggle" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyOld" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                      敬老管理-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu">-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyConcat#">联系人管理</a></li>-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyCare#">护工管理</a></li>-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyUser">用户管理</a></li>-->
+<!--&lt;!&ndash;                        <li><a class="dropdown-item" href="#">用户管理</a></li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link disabled">Disabled</a>-->
+<!--                </li>-->
+            </ul>
+<!--            <form class="d-flex" role="search">-->
+<!--                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
+<!--                <button class="btn btn-outline-success" type="submit">Search</button>-->
+<!--            </form>-->
+        </div>
+    </div>
+</nav>
+<div class="container-fluid" style="margin-top: 40px">
+    <div class="row">
+        <!-- 左侧分类 -->
+
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="/old_concat" class="list-group-item list-group-item-action active">查询所有老人的联系人信息</a>
+                <a href="#" class="list-group-item list-group-item-action">秒杀商品管理系统</a>
+                <a href="#" class="list-group-item list-group-item-action">报警信息系统</a>
+                <a href="#" class="list-group-item list-group-item-action">退出</a>
+            </div>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="col-md-8">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <td>老人姓名</td>
+                    <td>老人性别</td>
+                    <td>老人年龄</td>
+                    <td>老人家庭住址</td>
+                    <td>老人健康状况</td>
+                    <td>老人电话</td>
+                    <td>联系人姓名</td>
+                    <td>联系人性别</td>
+                    <td>联系人年龄</td>
+                    <td>联系人地址</td>
+                    <td>联系人电话</td>
+                </tr>
+                </thead>
+                <tbody>
+<!--                <tr th:each="item:${concats}">-->
+<!--                    <td th:text="${item.getMyold().getRealname()}"></td>-->
+<!--                    <td th:if="${item.getMyold().getSex()==0}">男</td>-->
+<!--                    <td th:if="${item.getMyold().getSex()==1}">女</td>-->
+<!--                    <td th:text="${item.getMyold().getAge()}"></td>-->
+<!--                    <td th:if="${item.getMyold().getHealthy()==0}">超级健康</td>-->
+<!--                    <td th:if="${item.getMyold().getHealthy()==1}">可以行走</td>-->
+<!--                    <td th:if="${item.getMyold().getHealthy()==2}">只能进食</td>-->
+<!--                    <td th:if="${item.getMyold().getHealthy()==3}">只能喘气</td>-->
+<!--                    <td th:text="${item.getMyold().getAddress()}"></td>-->
+<!--                    <td th:text="${item.getMyold().getTel()}"></td>-->
+<!--                    <td th:text="${item.getRealname()}"></td>-->
+<!--                    <td th:if="${item.getSex()==0}">男</td>-->
+<!--                    <td th:if="${item.getSex()==1}">女</td>-->
+<!--                    <td th:text="${item.getAge()}"></td>-->
+<!--                    <td th:text="${item.getAddress()}"></td>-->
+<!--                    <td th:text="${item.getTel()}"></td>-->
+
+<!--                    <td>-->
+<!--                        <a th:href="@{'/delitem?class_name='+${class_name}+'&id='+${item[0]}}" class="btn btn-sm btn-danger">删除</a>-->
+<!--                        <a th:href="@{'/updatepage?class_name='+${class_name}+'&id='+${item[0]}}" class="btn btn-sm btn-warning">修改</a>-->
+<!--&lt;!&ndash;                        <a th:href=@{/updatepage/{id}(id=${item[0]})} class="btn btn-sm btn-warning">修改</a>&ndash;&gt;-->
+<!--                    </td>-->
+<!--                </tr>-->
+                   <tr th:each="item:${concats}">
+                         <!-- 老人信息 -->
+                         <!-- 老人姓名 -->
+                         <td th:text="${item.myold?.realname} ?: '未关联'"></td>
+                         <!-- 老人性别 -->
+                         <td th:switch="${item.myold?.sex}">
+                          <span th:case="0">男</span>
+                          <span th:case="1">女</span>
+                          <span th:case="*">未知</span>
+                         </td>
+                           <!-- 老人年龄 -->
+                         <td th:text="${item.myold?.age} ?: '-'"></td>
+                          <!-- 老人家庭住址 -->
+                         <td th:text="${item.myold?.address} ?: '地址未填写'"></td>
+                          <!-- 老人健康状况 -->
+                         <td th:switch="${item.myold?.healthy}">
+                         <span th:case="0">超级健康</span>
+                         <span th:case="1">可以行走</span>
+                         <span th:case="2">只能进食</span>
+                         <span th:case="3">只能喘气</span>
+                         <span th:case="*">未知状态</span>
+                          </td>
+                         <!-- 老人电话 -->
+                         <td th:text="${item.myold?.tel} ?: '电话未登记'"></td>
+
+                           <!-- 联系人信息 -->
+                           <!-- 联系人姓名 -->
+                           <td th:text="${item.realname}"></td>
+                           <!-- 联系人性别 -->
+                           <td th:switch="${item.sex}">
+                           <span th:case="0">男</span>
+                           <span th:case="1">女</span>
+                           <span th:case="*">未知</span>
+                           </td>
+                           <!-- 联系人年龄 -->
+                           <td th:text="${item.age}"></td>
+                           <!-- 联系人地址 -->
+                           <td th:text="${item.address}"></td>
+                           <!-- 联系人电话 -->
+                           <td th:text="${item.tel}"></td>
+
+
+
+                     </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

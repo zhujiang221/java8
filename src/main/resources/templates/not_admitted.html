@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>住院状态提示</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* 移动端专属优化 */
+    @media (max-width: 576px) {
+        .alert-warning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            margin: 1rem;
+            border-radius: 12px;
+        }
+
+        .btn-lg-mobile {
+            font-size: 1.15rem;
+            padding: 1rem 2rem;
+            min-width: 80%;
+            margin: 0 auto;
+        }
+
+        .bi-hospital {
+            font-size: 3.5rem !important;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin: 1rem 0;
+        }
+    }
+
+    /* 通用触摸优化 */
+    .btn {
+        touch-action: manipulation; /* 禁用双击缩放 */
+        min-height: 48px; /* 符合W3C触摸目标标准 */
+    }
+  </style>
+</head>
+<body class="bg-light">
+<div class="container mt-3 mt-md-5">
+  <div class="card shadow-lg">
+    <div class="card-body text-center px-3 px-md-4 py-4">
+      <i class="bi bi-hospital fs-1 text-danger mb-3"></i>
+      <h2 class="mb-3 mb-md-4 fs-3 fs-md-2">住院状态提示</h2>
+      <div class="alert alert-warning fs-5 fs-md-4 mb-4">
+        您尚未办理住院手续，请先完成入院登记！
+      </div>
+      <a th:href="@{/home(id=${user.id})}"
+         class="btn btn-primary btn-lg btn-lg-mobile d-inline-flex align-items-center justify-content-center">
+        <i class="bi bi-house-door me-2"></i>返回主页面
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

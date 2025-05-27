@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.admin.mapper.MyCommonMapper">
+    <select id="selecthuanzhebydid" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+        SELECT
+        staff.id AS s_id,
+        staff.real_name,
+        patient.id AS p_id,
+        patient.name ,
+
+        admission.id AS a_id,
+        admission.patient_id,
+        admission.ward_id,
+        admission.doctor_id,
+        admission.admission_time,
+        admission.discharge_time,
+        admission.diagnosis,
+        admission.status,
+
+        staff.user_id,
+        staff.department,
+        staff.contact AS contact_d,
+        staff.title,
+
+        patient.sex,
+        patient.birthdate,
+        patient.contact AS patient_contact,
+        patient.create_time,
+        patient.user_id AS patient_user_id,
+        patient.description AS patient_description,
+
+        wards.ward_number,
+        wards.ward_type,
+        wards.bed_capacity,
+        wards.current_status ,
+        wards.department AS w_department,
+        wards.description AS w_description
+        FROM staff
+        JOIN admission ON staff.id = admission.doctor_id
+        JOIN patient ON admission.patient_id = patient.id
+        -- 新增病房表关联
+        JOIN wards ON admission.ward_id = wards.id
+        WHERE staff.id = #{id} and admission.status = 0
+    </select>
+
+</mapper>

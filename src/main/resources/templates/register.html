@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>用户注册 - 住院服务系统</title>
+
+  <!-- 核心样式库 -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .main-container {
+        margin-top: 80px;
+        padding-bottom: 100px;
+    }
+    .register-card {
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        border-radius: 1rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .form-label-bold {
+        font-weight: 600;
+        color: #495057;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+  </style>
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#" onclick="history.back()">
+      <i class="fas fa-arrow-left me-2"></i>返回
+    </a>
+
+    <div class="d-flex align-items-center">
+      <a class="btn btn-outline-secondary" th:href="@{/login/patient}">
+        <i class="fas fa-sign-out-alt"></i> 退出
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container container">
+  <div class="register-card p-5">
+    <div class="text-center mb-4">
+      <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.vdQsPA0YRf7WN1KinvO0mwHaE8?w=272&h=181&c=7&r=0&o=5&dpr=1.3&pid=1.7"
+           alt="医院图标" class="img-fluid rounded-circle mb-3" style="max-width: 100px;">
+      <h3 class="fw-bold text-primary">住院服务系统</h3>
+      <p class="text-muted">请完成用户注册</p>
+    </div>
+
+    <form action="/register_handler" method="post">
+      <!-- 用户名输入 -->
+      <div class="mb-4">
+        <label for="username" class="form-label form-label-bold">用户名</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+          <input type="text" class="form-control" id="username" placeholder="请输入用户名" name="username">
+        </div>
+      </div>
+
+      <!-- 密码输入 -->
+      <div class="mb-4">
+        <label for="password" class="form-label form-label-bold">密码</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <input type="password" class="form-control" id="password" placeholder="请输入密码" name="password">
+        </div>
+      </div>
+
+      <!-- 注册身份选择 -->
+      <div class="mb-5">
+        <label for="role" class="form-label form-label-bold">注册身份</label>
+        <select class="form-select" id="role" name="role">
+          <option value="0">患者</option>
+          <option value="1">医生</option>
+          <option value="3">护士</option>
+          <option value="4">管理员</option>
+        </select>
+      </div>
+
+      <!-- 注册按钮 -->
+      <button type="submit" class="btn btn-primary btn-lg w-100">
+        <i class="fas fa-user-plus me-2"></i>注册
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- 统一页脚 -->
+<footer class="footer mt-auto py-3 bg-light fixed-bottom">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 text-center text-muted">
+        &copy; 2025 明亮医院系统 | 技术支持：xx信息科技
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- 核心脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<!-- 表单验证 -->
+<script>
+  $(document).ready(function() {
+    // 为表单添加提交前验证
+    $('form').submit(function(e) {
+      var username = $('#username').val();
+      var password = $('#password').val();
+
+      if (!username || !password) {
+        alert('用户名和密码不能为空');
+        e.preventDefault();
+        return false;
+      }
+
+      // 可以添加更多验证逻辑
+    });
+  });
+</script>
+</body>
+</html>

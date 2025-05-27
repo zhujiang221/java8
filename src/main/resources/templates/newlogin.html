@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>医院住院管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 通用样式 */
+        .role-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            margin: 10px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            margin: 20px 0;
+            transition: font-size 0.3s;
+        }
+
+        /* 桌面端样式 */
+        @media (min-width: 992px) {
+            .role-card {
+                min-height: 350px;
+            }
+            .card-icon {
+                font-size: 4rem;
+            }
+            .role-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            }
+        }
+
+        /* 平板端样式 */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .role-card {
+                min-height: 300px;
+            }
+            .card-icon {
+                font-size: 3.5rem;
+            }
+        }
+
+        /* 移动端样式 */
+        @media (max-width: 767px) {
+            .container-fluid {
+                padding: 10px;
+            }
+            .card-icon {
+                font-size: 3rem;
+            }
+            .role-card {
+                min-height: 200px;
+                margin: 8px 0;
+            }
+            .display-4 {
+                font-size: 2.2rem;
+            }
+            .lead {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* 颜色定义 */
+        .text-purple { color: #6f42c1; }
+        .text-hospital-blue { color: #1e90ff; }
+        .bg-nurse-green { background-color: #28a745; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container-fluid py-3">
+    <div class="text-center mb-4">
+        <h1 class="display-4 text-primary mb-2">
+            <i class="fas fa-hospital me-2"></i>明亮医院住院管理系统
+        </h1>
+        <p class="lead text-muted">请选择您的身份进行登录</p>
+    </div>
+
+    <div class="row justify-content-center g-3">
+        <!-- 患者 -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="card role-card bg-white text-center p-2 ui-shadow"
+                 data-ajax="false"
+                 th:href="@{/login/patient}"
+                 data-href="/login/patient">
+                <i class="card-icon fas fa-procedures text-warning"></i>
+                <div class="card-body">
+                    <h3 class="card-title mb-2 h4">患者</h3>
+                    <p class="text-muted small">住院信息查询与服务</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- 医生 -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="card role-card bg-white text-center p-2 ui-shadow"
+                 data-ajax="false"
+                 th:href="@{/login/doctor}"
+                 data-href="/login/doctor">
+                <i class="card-icon fas fa-user-md text-hospital-blue"></i>
+                <div class="card-body">
+                    <h3 class="card-title mb-2 h4">医生</h3>
+                    <p class="text-muted small">患者诊疗与病历管理</p>
+                </div>
+            </div>
+        </div>
+
+<!--        &lt;!&ndash; 护士长 &ndash;&gt;-->
+<!--        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">-->
+<!--            <div class="card role-card bg-white text-center p-2 ui-shadow"-->
+<!--                 data-ajax="false"-->
+<!--                 th:href="@{/login/head-nurse}"-->
+<!--                 data-href="/login/head-nurse">-->
+<!--                <i class="card-icon fas fa-user-nurse text-purple"></i>-->
+<!--                <div class="card-body">-->
+<!--                    <h3 class="card-title mb-2 h4">护士长</h3>-->
+<!--                    <p class="text-muted small">护理管理与排班安排</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <!-- 护士 -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="card role-card bg-white text-center p-2 ui-shadow"
+                 data-ajax="false"
+                 th:href="@{/login/nurse}"
+                 data-href="/login/nurse">
+                <i class="card-icon fas fa-plus-square text-success"></i>
+                <div class="card-body">
+                    <h3 class="card-title mb-2 h4">护士</h3>
+                    <p class="text-muted small">日常护理与医嘱执行</p>
+                </div>
+            </div>
+        </div>
+        <!-- 管理员 -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="card role-card bg-white text-center p-2 ui-shadow"
+                 data-ajax="false"
+                 th:href="@{/login/admin}"
+                 data-href="/login/admin">
+                <i class="card-icon fas fa-user-shield text-danger"></i>
+                <div class="card-body">
+                    <h3 class="card-title mb-2 h4">管理员</h3>
+                    <p class="text-muted small">系统管理与权限控制</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 页脚 -->
+    <footer class="nav-footer mt-4 fixed-bottom">
+        <div class="container-fluid h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col text-center text-muted">
+                    &copy; 2025 明亮医院系统
+                    <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+<script>
+    $(document).on("tap click", ".role-card", function() {
+        const target = $(this).data('href');
+        if(target) {
+            window.location.href = target;
+        }
+    });
+
+    // 窗口调整时优化显示
+    $(window).on('resize', function(){
+        $('.role-card').css('transition', 'none').offsetHeight;
+        $('.role-card').css('transition', '');
+    });
+</script>
+</body>
+</html>

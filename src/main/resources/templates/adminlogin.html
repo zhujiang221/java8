@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>系统管理员登录 - 医院住院管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+    <style>
+        .admin-bg {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+        }
+        .admin-card {
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(231,76,60,0.15);
+            background: rgba(255,255,255,0.95);
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .admin-icon {
+            color: #e74c3c;
+            font-size: 4rem;
+            text-shadow: 2px 2px 4px rgba(231,76,60,0.2);
+        }
+        .form-control-admin {
+            border: 2px solid #c0392b;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        .form-control-admin:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 8px rgba(231,76,60,0.3);
+        }
+    </style>
+</head>
+<body class="admin-bg">
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card admin-card p-4">
+                <a href="/newlogin" class="btn btn-outline-primary"
+                   style="max-width: 100px;min-width: 40px; padding: 0.5rem 1.25rem;">
+                    <i class="fas fa-arrow-left me-2"></i>返回
+                </a>
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-shield admin-icon"></i>
+                    <h2 class="mt-3 text-danger">系统管理员登录</h2>
+                    <p class="text-muted">安全身份验证</p>
+                </div>
+                <form action="/login_handler" method="post">
+                    <input type="hidden" />
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-admin" 
+                               name="username" placeholder="管理员账号" required 
+                               >
+                    </div>
+<!--                    pattern="ADM-\d{6}" title="ADM开头接6位数字"-->
+<!--                    required minlength="12"-->
+                    <div class="mb-4">
+                        <input type="password" class="form-control form-control-admin" 
+                               name="password" placeholder="安全密码" >
+                    </div>
+                    <input type="hidden" name="role" value="4">
+                    <button class="btn btn-danger w-100 btn-lg" type="submit">
+                        <i class="fas fa-lock me-2"></i>安全登录
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <!-- 页脚 -->
+        <footer class="nav-footer mt-4 fixed-bottom">
+            <div class="container-fluid h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col text-center text-muted">
+                        &copy; 2025 明亮医院系统
+                        <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+<script>
+    $(document).on("pagecreate", function(){
+        $("input[type='text']").on("focus", function(){
+            $(this).parent().addClass("input-focused");
+        }).on("blur", function(){
+            $(this).parent().removeClass("input-focused");
+        });
+    });
+     //判断账号密码
+    $(document).ready(function() {
+    // 检测URL中的错误参数
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        // 显示弹窗
+        alert('账户或密码错误，请重新输入！');
+        // 清空参数并刷新页面
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.location.reload();
+    }
+    });
+</script>
+</body>
+</html>

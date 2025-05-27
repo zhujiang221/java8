@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.admin.mapper.MyBillingMapper">
+    <select id="selectfeyongy" resultType="com.hospital.admin.beans.Billing" parameterType="java.lang.Integer">
+        select * from billing where bill_status="未支付" and admission_id=#{id}
+    </select>
+    <select id="selectfeyongw" resultType="com.hospital.admin.beans.Billing" parameterType="java.lang.Integer">
+        select * from billing where bill_status="已支付" and admission_id=#{id}
+    </select>
+    <select id="selectfeyong" resultType="com.hospital.admin.beans.Billing" parameterType="java.lang.Integer">
+        select * from billing where admission_id=#{id}
+    </select>
+</mapper>

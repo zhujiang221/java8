@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--这里引用juqery和jquery mobile的框架-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
+    <!--这里是和jquery mobile的css文件-->
+    <link href="https://cdn.bootcdn.net/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.css" rel="stylesheet">
+    <!--这里是和jquery mobile的js文件-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.js"></script>
+</head>
+<style>
+    .ui-bar-a, .ui-page-theme-a .ui-bar-inherit, html .ui-bar-a .ui-bar-inherit, html .ui-body-a .ui-bar-inherit, html body .ui-group-theme-a .ui-bar-inherit {
+        background-color: #97c34a /*{a-bar-background-color}*/;
+        border-color: #dddddd /*{a-bar-border}*/;
+        color: #60c34a /*{a-bar-color}*/;
+        text-shadow: 0 /*{a-bar-shadow-x}*/ 1px /*{a-bar-shadow-y}*/ 0 /*{a-bar-shadow-radius}*/ #eee /*{a-bar-shadow-color}*/;
+        font-weight: bold;
+    }
+    /*这是选中的状态*/
+    .ui-page-theme-a .ui-btn.ui-btn-active, html .ui-bar-a .ui-btn.ui-btn-active, html .ui-body-a .ui-btn.ui-btn-active, html body .ui-group-theme-a .ui-btn.ui-btn-active, html head + body .ui-btn.ui-btn-a.ui-btn-active, .ui-page-theme-a .ui-checkbox-on:after, html .ui-bar-a .ui-checkbox-on:after, html .ui-body-a .ui-checkbox-on:after, html body .ui-group-theme-a .ui-checkbox-on:after, .ui-btn.ui-checkbox-on.ui-btn-a:after, .ui-page-theme-a .ui-flipswitch-active, html .ui-bar-a .ui-flipswitch-active, html .ui-body-a .ui-flipswitch-active, html body .ui-group-theme-a .ui-flipswitch-active, html body .ui-flipswitch.ui-bar-a.ui-flipswitch-active, .ui-page-theme-a .ui-slider-track .ui-btn-active, html .ui-bar-a .ui-slider-track .ui-btn-active, html .ui-body-a .ui-slider-track .ui-btn-active, html body .ui-group-theme-a .ui-slider-track .ui-btn-active, html body div.ui-slider-track.ui-body-a .ui-btn-active {
+        background-color: #3388cc /*{a-active-background-color}*/;
+        border-color: #3388cc /*{a-active-border}*/;
+        color: #8bc34a /*{a-active-color}*/;
+        text-shadow: 0 /*{a-active-shadow-x}*/ 1px /*{a-active-shadow-y}*/ 0 /*{a-active-shadow-radius}*/ #3388cc /*{a-active-shadow-color}*/;
+    }
+    /*这是未选中的状态*/
+    .ui-page-theme-a .ui-btn, html .ui-bar-a .ui-btn, html .ui-body-a .ui-btn, html body .ui-group-theme-a .ui-btn, html head + body .ui-btn.ui-btn-a, .ui-page-theme-a .ui-btn:visited, html .ui-bar-a .ui-btn:visited, html .ui-body-a .ui-btn:visited, html body .ui-group-theme-a .ui-btn:visited, html head + body .ui-btn.ui-btn-a:visited {
+        background-color: #f6f6f6 /*{a-bup-background-color}*/;
+        border-color: #ddd /*{a-bup-border}*/;
+        color: #333 /*{a-bup-color}*/;
+        text-shadow: 0 /*{a-bup-shadow-x}*/ 1px /*{a-bup-shadow-y}*/ 0 /*{a-bup-shadow-radius}*/ #f3f3f3 /*{a-bup-shadow-color}*/;
+    }
+    .img{
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+    }
+    .img img{
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+    }
+
+</style>
+<body>
+<!--网页做移动端页面都是div-->
+<div data-role="header" data-theme="a">
+    <a href="#">返回</a>
+    <h3>标题</h3>
+</div>
+<div data-role="main">
+    <!-- SockJS -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+
+    <!-- STOMP -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <!-- 登录页面内容 -->
+    <div style="width:400px;height:400px;border-radius:200px;background-color:#FF0;padding-top:150px;margin:0 auto">
+        <center>
+            <h3 id="mydiv" style="font-size:70px"></h3>
+        </center>
+    </div>
+    <h3 style="color:red; font-size:70px; text-align:center">打卡</h3>
+    <div style="width:100%;height:100%;font-size:70px" id="mymessage"></div>
+</div>
+
+<script>
+    // 时间显示函数
+    function updateTime() {
+        const mydate = new Date();
+        const hours = String(mydate.getHours()).padStart(2, '0');
+        const minutes = String(mydate.getMinutes()).padStart(2, '0');
+        const seconds = String(mydate.getSeconds()).padStart(2, '0');
+        document.getElementById("mydiv").innerText = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // 初始立即执行一次
+    updateTime();
+
+    // 设置定时器每秒更新（修正拼写错误setInterval）
+    const timer = setInterval(() => {
+        updateTime();
+    }, 1000);
+
+    // 清理定时器（根据需要添加）
+    // window.onunload = () => clearInterval(timer);
+    //第二部分是socket推送
+    var socket = new SockJS("/websocket");
+
+    var stomp=Stomp.over(socket);
+
+    stomp.connect({},function(frame){
+        console.log("connected:"+frame);
+        stomp.subscribe("/topic/warn",function(message){
+            console.log(message);
+            $("#mymessage").text(message.body);
+        })
+    })
+
+</script>
+
+<div data-role="footer" data-theme="a" data-position="fixed">
+    <!--这是一个底部导航，在前端布局中，导航使用ul 无序列表-->
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">分类</a></li>
+            <li><a href="#">客服</a></li>
+            <li><a href="#">我的</a></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理页面</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.css" rel="stylesheet">
+
+</head>
+<body>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
+<div class="card" style="width:100%">
+<!--    <img src="https://img.shetu66.com/2023/08/11/1691718566833234.jpg" class="card-img-top" alt="..." style="height:500px">-->
+    <div class="card-body">
+        <h2 class="card-title"><center style="color:red">
+            后&nbsp台&nbsp管&nbsp理&nbsp系&nbsp统
+        </center></h2>
+        <h3 class="card-title"><center style="color:red">贩卖系统</center></h3>
+    </div>
+</div>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">管理管理</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Admission">Admissions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Billing">Billing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Department">Department</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.MedicalOrders">MedicalOrders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Patient">Patients</a>
+                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Schedules">Schedules</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Shifts">Shifts</a>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Staff">Staff</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Users">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Wards">Wards</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.DischargeApplication">DischargeApplication</a>
+                </li>
+
+
+
+                <!--                <li class="nav-item dropdown">-->
+<!--                    <a class="nav-link dropdown-toggle" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyOld" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                      敬老管理-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu">-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyConcat#">联系人管理</a></li>-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyCare#">护工管理</a></li>-->
+<!--                        <li><a class="dropdown-item" href="http://localhost:8081/lists?class_name=com.older.user.beans.MyUser">用户管理</a></li>-->
+<!--&lt;!&ndash;                        <li><a class="dropdown-item" href="#">用户管理</a></li>&ndash;&gt;-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link disabled">Disabled</a>-->
+<!--                </li>-->
+            </ul>
+<!--            <form class="d-flex" role="search">-->
+<!--                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
+<!--                <button class="btn btn-outline-success" type="submit">Search</button>-->
+<!--            </form>-->
+        </div>
+    </div>
+</nav>
+<div class="container-fluid" style="margin-top: 40px">
+    <div class="row">
+        <!-- 左侧分类 -->
+
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="/old_concat" class="list-group-item list-group-item-action active">查询所有老人的联系人信息</a>
+                <a href="#" class="list-group-item list-group-item-action">秒杀商品管理系统</a>
+                <a href="#" class="list-group-item list-group-item-action">报警信息系统</a>
+                <a href="#" class="list-group-item list-group-item-action">退出</a>
+            </div>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="col-md-9">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <td th:each="title:${anotations}" th:text="${title}"></td>
+                    <td>操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item:${datas}">
+                    <td th:each="dataitem : ${item}"
+                        th:text="${dataitem != '0001-01-01 00:00:00' and dataitem != '0001-01-01'} ? ${dataitem} : '待更新'"></td>
+                    <td>
+                        <a th:href="@{'/delitem?class_name='+${class_name}+'&id='+${item[0]}}" class="btn btn-sm btn-danger">删除</a>
+                        <a th:href="@{'/updatepage?class_name='+${class_name}+'&id='+${item[0]}}" class="btn btn-sm btn-warning">修改</a>
+<!--                        <a th:href=@{/updatepage/{id}(id=${item[0]})} class="btn btn-sm btn-warning">修改</a>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

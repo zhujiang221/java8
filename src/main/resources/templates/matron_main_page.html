@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>护士长工作站 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        .nav-footer {
+            height: 60px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+        @media (max-width: 768px) {
+            .navbar-text.d-md-none {
+                max-width: 120px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-dark bg-primary shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-user-nurse"></i> 护士长工作站
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-users me-1"></i>护士管理
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>新护士添加</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>信息维护</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-lock me-2"></i>权限管理</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-calendar-check me-1"></i>排班调度
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-calendar-plus me-2"></i>计划制定</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#scheduleManage">
+                            <i class="fas fa-calendar-minus me-2"></i>调整审批
+                        </a></li>
+                        <div class="collapse" id="scheduleManage">
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action ps-4">
+                                    <i class="fas fa-check-circle me-2"></i>待审批申请
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action ps-4">
+                                    <i class="fas fa-history me-2"></i>审批记录
+                                </a>
+                            </div>
+                        </div>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-calendar-day me-2"></i>实时查看</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bed me-1"></i>病房管理
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-clipboard-list me-2"></i>床位状态</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-procedures me-2"></i>患者分配</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-check-double me-2"></i>巡查记录</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-injured me-1"></i>患者管理
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-comments me-2"></i>护理协调</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-tasks me-2"></i>任务分配</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="me-3 text-white d-none d-md-block" th:text="'当前护士长：' + ${doc_information.real_name}"></span>
+                <button class="btn btn-outline-light me-2">
+                    <i class="fas fa-bell"></i>
+                </button>
+
+                <a class="btn btn-outline-light" th:href="@{/login/head-nurse}" >
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="container-fluid main-container">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-pie text-primary"></i> 今日护理概览</h5>
+                    <div class="row">
+                        <div class="col-6 col-md-3">
+                            <p class="text-muted mb-1">在岗护士</p>
+                            <p class="h5" text="${onDutyNurses}">12人</p>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <p class="text-muted mb-1">待处理任务</p>
+                            <p class="h5 text-danger" text="${pendingTasks}">5项</p>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <p class="text-muted mb-1">空置床位</p>
+                            <p class="h5" text="${availableBeds}">3床</p>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <p class="text-muted mb-1">在院患者</p>
+                            <p class="h5 text-success" text="${currentPatients}">42人</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-calendar-alt text-info"></i> 今日排班表</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>护士姓名</th>
+                                <th>班次类型</th>
+                                <th>工作时间</th>
+                                <th>负责病房</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr each="schedule : ${schedules}">
+                                <td text="${schedule.nurse.realName}">王护士</td>
+                                <td text="${schedule.shift.shiftName}">早班</td>
+                                <td text="${schedule.shift.startTime}+'-'+${schedule.shift.endTime}">08:00-16:00</td>
+                                <td text="${schedule.wards}">A301-A305</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+
+<script>
+    $(document).on("pagecreate", function(){
+        // 移动端优化
+        if(window.innerWidth < 768) {
+            $('.dropdown-menu').addClass('shadow');
+        }
+
+        // 自动关闭移动端菜单
+        $('.dropdown-item').on('click', function(){
+            if(window.innerWidth < 768) {
+                $('#mainNav').collapse('hide');
+            }
+        });
+
+        // 折叠菜单交互
+        $('[data-bs-toggle="collapse"]').on('click', function(){
+            $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
+        });
+    });
+</script>
+</body>
+</html>

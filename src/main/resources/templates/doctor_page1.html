@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>医生工作站 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        @media (max-width: 768px) {
+            .nav-function {
+                top: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+    <div class="container-fluid">
+        <form th:action="@{/home}" method="post" class="d-inline" id="homeForm">
+            <input type="hidden" name="id" th:value="${user.id}">
+            <a class="navbar-brand" href="#" onclick="this.closest('form').submit(); return false;">
+                <i class="fas fa-hospital text-primary"></i> 医生工作站
+            </a>
+        </form>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <!-- 患者管理 -->
+                <li class="nav-item">
+                    <form th:action="@{/huanzheguanli}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${doc_information.user_id}">
+                        <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">
+                            <i class="fas fa-user-injured me-1"></i>患者管理
+                        </a>
+                    </form>
+                </li>
+                <!-- 住院管理 -->
+                <li class="nav-item">
+                    <form th:action="@{/zhuyuanguanli}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${doc_information.user_id}">
+                        <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">
+                            <i class="fas fa-hospital-user me-1"></i>住院管理
+                        </a>
+                    </form>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3 d-none d-md-block" th:text="'当前医生：' + ${doc_information.real_name}"></span>
+                <button class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <a class="btn btn-outline-danger" th:href="@{/login/doctor}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<!-- 主内容区 -->
+
+
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+
+<script>
+    $(document).on("pagecreate", function(){
+        // 移动端优化
+        if(window.innerWidth < 768) {
+            $('.dropdown-menu').addClass('shadow');
+            $('.table').addClass('table-sm');
+        }
+
+        // 自动关闭移动端菜单
+        $('.dropdown-item').on('click', function(){
+            if(window.innerWidth < 768) {
+                $('#mainNav').collapse('hide');
+            }
+        });
+
+        // 医嘱管理切换
+        $('#orderManage').on('show.bs.collapse', function(){
+            $('a[data-bs-target="#orderManage"] i').removeClass('fa-edit').addClass('fa-times-circle');
+        }).on('hide.bs.collapse', function(){
+            $('a[data-bs-target="#orderManage"] i').removeClass('fa-times-circle').addClass('fa-edit');
+        });
+    });
+</script>
+</body>
+</html>

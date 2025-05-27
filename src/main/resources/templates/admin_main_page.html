@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>系统管理平台 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.css">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        .nav-function {
+            background: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 60px;
+            width: 100%;
+            z-index: 1000;
+        }
+        @media (max-width: 768px) {
+            .nav-function {
+                top: 56px;
+            }
+        }
+    </style>
+    <style>
+        /* 新增优化样式 */
+        .main-container {
+            margin-top: 80px;
+            margin-bottom: 80px; /* 增加底部边距防止页脚遮挡 */
+            min-height: calc(100vh - 160px);
+        }
+
+        .table-responsive-md {
+            overflow-x: auto;
+            min-height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin-top: 60px;
+                margin-bottom: 60px;
+            }
+
+            .table-responsive-md {
+                border: 1px solid #dee2e6;
+                border-radius: 0.25rem;
+            }
+
+            .table th, .table td {
+                white-space: nowrap;
+                min-width: 120px;
+            }
+
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+    <style>
+        .btn-add {
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-add::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg) translate(-20%, 100%);
+            transition: all 0.5s ease;
+        }
+
+        .btn-add:hover::after {
+            transform: rotate(45deg) translate(20%, -100%);
+        }
+    </style>
+
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" onclick="refreshPatientList()">
+            <i class="fas fa-shield-alt"></i> 系统管理平台
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Admission&page=1">住院记录管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Billing&page=1">费用明细管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Department&page=1">科室管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.MedicalOrders&page=1">医嘱管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Patient&page=1">患者信息管理</a>
+                </li>
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Schedules">Schedules</a>-->
+                <!--                </li>-->
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Shifts">Shifts</a>-->
+                <!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Staff&page=1">医护人员信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Users&page=1">用户账户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.Wards&page=1">病房信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.DischargeApplication&page=1">出院申请管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.SecKill&page=1">秒杀商品信息管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="http://localhost:8082/lists?class_name=com.hospital.admin.beans.MyOrder&page=1">订单信息管理</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-light" th:href="@{/login/admin}" >
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<!-- 权限调整折叠内容 -->
+<div class="collapse" id="permCollapse">
+    <div class="container-fluid py-2 bg-light border-bottom">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex flex-wrap">
+                    <a href="#" class="btn btn-link text-decoration-none me-3">
+                        <i class="fas fa-user-shield me-2"></i>角色管理
+                    </a>
+                    <a href="#" class="btn btn-link text-decoration-none me-3">
+                        <i class="fas fa-ban me-2"></i>账号禁用
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 主内容区 -->
+
+<div style="height=100px">
+    <h6>-</h6>
+    <h6>-</h6>
+</div>
+<div class="col-12"> <!-- 改为全宽布局 -->
+    <div class="card shadow-sm mb-4">
+        <!-- 添加按钮 -->
+        <div class="mt-4 mb-4 mr-4">
+            <a th:href="@{'/addpage?class_name='+${class_name}}"
+               class="btn btn-primary btn-lg shadow-sm rounded-pill px-4 py-2 d-inline-flex align-items-center transition-all"
+               style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+              border: none;
+              transition: transform 0.2s, box-shadow 0.2s;">
+                <i class="fas fa-plus-circle fs-5 me-2"></i>
+                <span class="fw-medium">新增</span>
+            </a>
+        </div> <!-- 新增卡片容器 -->
+        <div class="card-body table-responsive-md"> <!-- 响应式表格容器 -->
+            <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <td th:each="title:${annotations}" th:text="${title}"></td>
+                    <td>操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item:${datas}">
+                    <td th:each="dataitem : ${item}"
+                        th:text="${dataitem != '0001-01-01 00:00:00' and dataitem != '0001-01-01'} ? ${dataitem} : '待更新'"></td>
+                    <td>
+                        <a th:href="@{'/delitem?class_name='+${class_name}+'&id='+${item[0]}+'&page='+${pagenum}}" class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash mr-1"></i> 删除
+                        </a>
+                        <a th:href="@{'/updatepage?class_name='+${class_name}+'&id='+${item[0]}+'&page='+${pagenum}}" class="btn btn-sm btn-warning">
+                            <i class="fa fa-edit mr-1"></i> 修改
+                        </a>
+                        <!--                        <a th:href=@{/updatepage/{id}(id=${item[0]})} class="btn btn-sm btn-warning">修改</a>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-4">
+                </div>
+                <div class="col" style="center">
+                    <nav aria-label="Page navigation example">
+
+                        <ul class="pagination">
+                            <!-- 上一页 -->
+                            <li class="page-item">
+                                <a class="page-link"
+                                   th:href="@{/lists(class_name=${class_name},page=${pagenum > 1? pagenum - 1 : 1})}">
+                                    上一页
+                                </a>
+                            </li>
+
+                            <!-- 页码 -->
+                            <li class="page-item" th:each="mypage:${#numbers.sequence(1, pages > 0? pages : 1)}">
+                                <a class="page-link"
+                                   th:text="${mypage}"
+                                   th:href="@{/lists(class_name=${class_name},page=${mypage})}">
+                                    [[${mypage}]]
+                                </a>
+                            </li>
+
+                            <!-- 下一页 -->
+                            <li class="page-item">
+                                <a class="page-link"
+                                   th:href="@{/lists(class_name=${class_name},page=${pagenum < pages? pagenum + 1 : pages})}">
+                                    下一页
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="nav-footer mt-4 fixed-bottom">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+
+<script>
+    $(document).on("pagecreate", function(){
+        // 移动端优化
+        if(window.innerWidth < 768) {
+            $('.dropdown-menu').addClass('shadow');
+        }
+
+        // 自动关闭移动端菜单
+        $('.dropdown-item').on('click', function(){
+            if(window.innerWidth < 768) {
+                $('#mainNav').collapse('hide');
+            }
+        });
+
+        // 权限调整切换
+        $('#permCollapse').on('show.bs.collapse', function(){
+            $('a[data-bs-target="#permCollapse"] i').removeClass('fa-lock').addClass('fa-unlock');
+        }).on('hide.bs.collapse', function(){
+            $('a[data-bs-target="#permCollapse"] i').removeClass('fa-unlock').addClass('fa-lock');
+        });
+    });
+</script>
+</body>
+</html>

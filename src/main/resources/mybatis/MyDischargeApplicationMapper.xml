@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.admin.mapper.MyDischargeApplicationMapper">
+
+    <!-- 原有其他配置保持不变 -->
+    <select id="selectByPrimaryKey" parameterType="int" resultType="com.hospital.admin.beans.DischargeApplication">
+        SELECT *
+        FROM dischargeapplication
+        WHERE patient_id = #{id}
+    </select>
+
+    <!-- 修改updateByPrimaryKey中的字段错误 -->
+    <update id="updateByPrimaryKey" parameterType="com.hospital.admin.beans.DischargeApplication">
+        UPDATE dischargeapplication SET
+        patient_id = #{patient_id},
+        admission_id = #{admission_id},
+        apply_time = #{apply_time},
+        apply_reason = #{apply_reason},
+        approve_doctor_id = #{approve_doctor_id},
+        approve_status = #{approve_status},
+        approve_comment = #{approve_comment},
+        approve_time = #{approve_time}
+        WHERE id = #{id}
+    </update>
+</mapper>

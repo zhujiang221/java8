@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.admin.mapper.MyCommonMapper">
+    <select id="selectyizhuduanqi" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+        SELECT
+        mo.*,
+        s.real_name AS doctor_name
+        FROM
+        medicalorders mo
+        JOIN
+        staff s ON mo.doctor_id = s.id
+        WHERE
+        order_type=1 and mo.patient_id = #{id}
+    </select>
+    <select id="selectyizhuchangqi" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+        SELECT
+        mo.*,
+        s.real_name AS doctor_name
+        FROM
+        medicalorders mo
+        JOIN
+        staff s ON mo.doctor_id = s.id
+        WHERE
+        order_type=0 and mo.patient_id = #{id}
+
+    </select><select id="selectyizhu" resultType="com.hospital.admin.beans.MyCommon" parameterType="java.lang.Integer">
+        SELECT
+        mo.*,
+        s.real_name AS doctor_name
+        FROM
+        medicalorders mo
+        JOIN
+        staff s ON mo.doctor_id = s.id
+        WHERE
+         mo.patient_id = #{id}
+
+</select>
+
+</mapper>

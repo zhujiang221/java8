@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>订单支付 - 住院服务系统</title>
+
+    <!-- 核心样式库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .main-container {
+            margin-top: 80px;
+            padding-bottom: 100px;
+        }
+        .payment-card {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            border-radius: 1rem;
+        }
+        .coupon-img {
+            max-height: 300px;
+            object-fit: contain;
+        }
+        .form-label-bold {
+            font-weight: 600;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+    <div class="container-fluid">
+            <a class="navbar-brand" href="#" >
+                <i class="fas fa-hospital text-primary"></i> 住院服务系统
+            </a>
+
+        <div class="d-md-none ms-auto me-2">
+            <div class="d-flex flex-column text-end">
+                <small class="text-muted" text="'ID:' + ${pat_information.id}"></small>
+                <span class="small" text="${pat_information.name}"></span>
+            </div>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto"></ul>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-secondary" th:href="@{/login/patient}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- 主内容区 -->
+<div class="container main-container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card payment-card">
+                <div class="card-body p-4">
+                    <!-- 商品信息 -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-12 text-center">
+                            <img th:src="@{/images/youhuijuan.png}"
+                                 class="coupon-img"
+                                 alt="医疗优惠券">
+                        </div>
+                    </div>
+
+                    <!-- 订单详情 -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4 class="text-center mb-3">
+                                <i class="fas fa-tag me-2 text-primary"></i>订单详情
+                            </h4>
+                            <dl class="row">
+                                <dt class="col-6 text-end form-label-bold">商品ID：</dt>
+                                <dd class="col-6" th:text="${good_id}"></dd>
+
+                                <dt class="col-6 text-end form-label-bold">有效期至：</dt>
+                                <dd class="col-6">2025年12月31日</dd>
+
+                                <dt class="col-6 text-end form-label-bold">支付金额：</dt>
+                                <dd class="col-6 text-danger fw-bold" th:text="'¥'+${price}"></dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- 支付表单 -->
+                    <form action="/pay" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" name="user_id" value="1">
+                        <input type="hidden" name="good_id" th:value="${good_id}">
+                        <input type="hidden" name="mycount" value="1">
+                        <input type="hidden" name="mysum" th:value="${price}">
+
+                        <!-- 配送地址 -->
+                        <div class="mb-4">
+                            <label class="form-label-bold">
+                                <i class="fas fa-map-marker-alt me-2"></i>配送地址
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="address"
+                                   placeholder="请输入详细配送地址"
+                                    required>
+                        </div>
+
+                        <!-- 联系电话 -->
+                        <div class="mb-4">
+                            <label class="form-label-bold">
+                                <i class="fas fa-mobile-alt me-2"></i>联系电话
+                            </label>
+                            <input type="tel"
+                                   class="form-control"
+                                   name="tel"
+                                   placeholder="请输入11位手机号码"
+                                   required>
+                        </div>
+
+                        <!-- 支付按钮 -->
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-wallet me-2"></i>立即支付
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统一页脚 -->
+<footer class="footer mt-auto py-3 bg-light fixed-bottom">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center text-muted">
+                &copy; 2025 明亮医院系统 | 技术支持：xx信息科技
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<!-- 表单验证 -->
+
+</body>
+</html>

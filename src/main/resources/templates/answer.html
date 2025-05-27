@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>患者主页面 - 医院住院管理系统</title>
+
+    <!-- 依赖库 (移除了jquery-mobile) -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px;"> <!-- 添加底部内边距 -->
+
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm fixed-top">
+    <div class="container-fluid">
+        <form action="@{/home}" method="post" class="d-inline">
+            <a class="navbar-brand" href="#">
+                <input type="hidden" name="id" value="${user.id}">
+                <i class="fas fa-hospital text-primary"></i> 住院服务系统
+            </a>
+        </form>
+    </div>
+</nav>
+
+<!-- 主内容区 (使用Bootstrap网格系统) -->
+<main class="container mt-5 pt-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <button class="btn btn-secondary mb-3" onclick="history.back()">
+                <i class="fas fa-arrow-left me-2"></i>返回
+            </button>
+        </div>
+    </div>
+    <!-- 临时医嘱模块 -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-comment-medical text-primary"></i> 全部医嘱</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>医嘱内容</th>
+                                <th>开嘱医生</th>
+                                <th>创建时间</th>
+                                <th>执行时间</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${answer}">
+                                <td th:text="${order.order_content}">心电图检查</td>
+                                <td th:text="${order.doctor_name}">王医生</td>
+                                <td th:text="${#temporals.format(order.create_time, 'yyyy-MM-dd hh:mm')}">2024-03-15 14:30</td>
+                                <td th:text="${#temporals.format(order.execute_time, 'yyyy-MM-dd HH:mm:ss') == '0001-01-01 00:00:00'? '未执行' : #temporals.format(order.execute_time, 'yyyy-MM-dd HH:mm')}">03-16 09:00</td>
+                                <td>
+                               <span class="badge"
+                                     th:classappend="${order.order_status == 0? 'bg-warning' : (order.order_status == 1? 'bg-success' : 'bg-secondary')}"
+                                     th:text="${order.order_status == 0 ? '待执行' : order.order_status == 1 ? '已完成' : '未知状态'}">
+                                    未知
+                                </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div id="myanswer" class="text-center mb-4"></div>
+
+                    <div class="input-group">
+                          <textarea
+                                  id="mytxt"
+                                  class="form-control"
+                                  placeholder="将自己的医嘱表复制粘贴到大模型中，大模型会根据医嘱进行住院总结。"
+                                  style="height: auto; min-height: 38px; max-height: 150px; overflow-y: auto; resize: vertical;"
+                          ></textarea>
+                        <button class="btn btn-primary" onclick="getask()">
+                            <i class="fas fa-paper-plane"></i> 发送
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="footer bg-light fixed-bottom py-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col text-center text-muted">
+                &copy; 2025 明亮医院系统
+                <span class="d-none d-md-inline">| 技术支持：xx信息科技</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 脚本 (移除了jquery-mobile) -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    var mydata=""
+    function getask(){
+        $("#myanswer").text("大模型正在思考中，请稍等……");
+        // 创建一个EventSource对象，连接到后端的stream接口
+        const eventSource = new EventSource('/ask?msg='+$("#mytxt").val());
+
+        // 当接收到后端推送的消息时，执行该回调函数
+        eventSource.onmessage = (event) => {
+            // 解析接收到JSON格式数据
+            const data = JSON.stringify(event.data);
+            let youdata=data.replace("\"","").replace("\"","")
+            console.log(youdata);
+             mydata=mydata+youdata;
+            // 将解析后的数据中的content内容追加到id为output的HTML元素中
+            $("#myanswer").text(mydata);
+        };
+
+        // 当EventSource连接错误时，执行该回调函数
+        eventSource.onerror = (err) => {
+            // 在控制台打印错误信息
+            console.error('EventSource failed:', err);
+            // 关闭EventSource连接
+            eventSource.close();
+        };
+    }
+</script>
+</body>
+</html>

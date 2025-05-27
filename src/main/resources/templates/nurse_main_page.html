@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>护士工作站 - 医院住院管理系统</title>
+
+    <!-- 依赖库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 自定义报警样式 */
+        #alertMessage {
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+    </style>
+    <style>
+        .main-container {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+        .nav-footer {
+            height: 60px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+        .execute-btn {
+            position: relative;
+            min-width: 90px;
+        }
+        .loading-spinner {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- 主导航栏 -->
+<nav class="navbar navbar-expand-md navbar-dark bg-info shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" onclick="refreshPatientList()">
+            <i class="fas fa-user-nurse"></i> 护士工作站
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" role="button" onclick="refreshPatientList()">
+                        <i class="fas fa-prescription me-1"></i>医嘱执行
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="me-3 text-white d-none d-md-block" th:text="'当前护士：' + ${doc_information.real_name}"></span>
+                <a class="btn btn-outline-light" th:href="@{/login/nurse}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container">
+
+    <div class="container-fluid mt-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-bell me-2"></i>实时报警信息
+                </h5>
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+
+            <!-- 报警信息主体 -->
+            <div class="card-body p-0">
+                <div class="alert m-0"
+                     id="alertMessage"
+                    >
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="alert-heading mb-1">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span id="mymessage"></span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 医嘱管理卡片 -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-prescription-bottle me-2"></i>待执行医嘱列表
+                </h5>
+                <div class="badge bg-light text-info fs-6">
+                    <i class="fas fa-tasks me-1"></i>
+                    <span th:text="'待处理医嘱：' + ${patientCount} + '条'"></span>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                        <tr>
+                            <th>患者信息</th>
+                            <th>主治医生</th>
+                            <th>医嘱内容</th>
+                            <th>医嘱类型</th>
+                            <th>当前状态</th>
+                            <th>执行时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold" th:text="${order.patient_name}"></span>
+                                    <small class="text-muted"
+                                           th:text="|${order.sex == 1 ? '男' : '女'} · ${#temporals.format(order.birthdate, 'yyyy-MM-dd')}|">
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div th:with="doctorTitle=${order.title} ?: '医师'">
+                                    <span th:text="${order.doctor_name}"></span>
+                                    <small class="d-block text-muted"
+                                           th:text="|${order.staff_department} ${doctorTitle}|">
+                                    </small>
+                                </div>
+                            </td>
+                            <td th:text="${order.order_content}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${order.order_type} == 0 ? 'bg-primary' : 'bg-warning'"
+                                      th:text="${order.order_type} == 0 ? '长期医嘱' : '临时医嘱'">
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${order.order_status == 0 ? 'bg-warning' :
+                                                      (order.order_status == 1 ? 'bg-info' : 'bg-success')}"
+                                      th:text="${order.order_status == 0 ? '待执行' :
+                                               (order.order_status == 2 ? '执行中' : '已完成')}">
+                                </span>
+                            </td>
+                            <td>
+                                <span th:text="${#temporals.format(order.execute_time, 'yyyy-MM-dd HH:mm:ss') == '0001-01-01 00:00:00'}
+                                    ? '待执行'
+                                    : ${#temporals.format(order.execute_time, 'MM-dd HH:mm')}">
+                                </span>
+                                <span th:unless="${order.execute_time}" class="text-muted">未执行</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/Common_updatehh}" method="post" class="execute-form">
+                                    <input type="hidden" name="class_name" value="com.hospital.admin.beans.MedicalOrders">
+                                    <input type="hidden" name="id" th:value="${order.id}">
+                                    <input type="hidden" name="order_status" value="1">
+                                    <input type="hidden" name="execute_time"
+                                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">
+                                    <button type="submit" class="btn btn-sm btn-outline-success execute-btn">
+                                        <span class="loading-spinner spinner-border spinner-border-sm"></span>
+                                        <i class="fas fa-check-circle"></i>
+                                        <span class="btn-text">确认执行</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer bg-transparent">
+                <small class="text-muted"
+                       th:text="'最后更新时间：' + ${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}">
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 成功提示模态框 -->
+<div class="modal fade" id="executeSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                <h5 class="mb-3">医嘱执行成功！</h5>
+                <p>页面即将自动刷新...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 脚本 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 医嘱执行处理
+(function() {
+    const successModal = new bootstrap.Modal('#executeSuccessModal');
+
+    $('.execute-form').on('submit', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const btn = form.find('.execute-btn');
+        const spinner = btn.find('.loading-spinner');
+        const btnText = btn.find('.btn-text');
+
+        // 显示加载状态
+        btn.prop('disabled', true);
+        spinner.show();
+        btnText.text('提交中...');
+
+        $.ajax({
+            type: "POST",
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function(response) {
+                if(response.trim() === "success") {
+                    successModal.show();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showError(form, '操作失败: ' + response);
+                }
+            },
+            error: () => showError(form, '网络请求异常，请检查连接'),
+            complete: () => {
+                btn.prop('disabled', false);
+                spinner.hide();
+                btnText.text('确认执行');
+            }
+        });
+    });
+
+    function showError(form, msg) {
+        form.find('.alert').remove();
+        form.prepend(`
+            <div class="alert alert-danger alert-dismissible fade show mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                ${msg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+    }
+})();
+
+// 通用功能
+function refreshPatientList() {
+    location.reload();
+}
+</script>
+<!-- SockJS -->
+<script src="https://cdn.bootcdn.net/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<!-- STOMP -->
+<script src="https://cdn.bootcdn.net/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    //第二部分是socket推送
+var socket = new SockJS("/websocket");
+
+var stomp=Stomp.over(socket);
+
+stomp.connect({},function(frame){
+    console.log("connected:"+frame);
+    stomp.subscribe("/topic/warn",function(message){
+        console.log(message);
+        $("#mymessage").text(message.body);
+    })
+})
+
+</script>
+</body>
+</html>
